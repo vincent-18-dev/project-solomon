@@ -42,13 +42,39 @@ const Login = () => {
       },
     });
   };
+  const [userform, setUserform] = useState(false);
   const onSubmit = async (data) => {
-    try {
-      const res = await axios.post("https://dummyjson.com/auth/login", {
+    const value = {
+      method: "login",
+      data: {
         ...data,
-      });
-      if (res.status === 200) {
-        showsuccessModal();
+      },
+    };
+    const jsonString = JSON.stringify(value);
+    try {
+      const res = await axios
+        .post(
+          `https://bpartner.in/personal/bpartner/imeilogger/getipaddress.php`,
+          {
+            ...data,
+          }
+        )
+        .then((data) => data)
+        .then((response) => response?.data);
+      if (res.Available === "Yes") {
+        setUserform(true);
+      } else {
+        showErrorModal();
+      }
+
+      if (userform === true && res.Available === "Yes") {
+        const products = await axios.post(
+          `http://106.51.2.145:2081/Dlite_Kot/Service1.svc/webreport`,
+          {
+            jsonString,
+          }
+        );
+        console.log("products", products);
       }
     } catch (errors) {
       if (errors) {
@@ -63,22 +89,35 @@ const Login = () => {
         <div className="login-section">
           <div className="login-container">
             <form className="login-form" onSubmit={handleSubmit(onSubmit)}>
-              <div>
-                <input
-                  type="text"
-                  name="username"
-                  placeholder="User Name"
-                  {...register("username", { required: true })}
-                ></input>
-              </div>
-              <div>
-                <input
-                  type="password"
-                  name="password"
-                  placeholder="Password"
-                  {...register("password", { required: true })}
-                ></input>
-              </div>
+              {!userform ? (
+                <div>
+                  <input
+                    type="text"
+                    name="customerid"
+                    placeholder="Customer ID"
+                    {...register("customerid", { required: true })}
+                  ></input>
+                </div>
+              ) : (
+                <>
+                  <div>
+                    <input
+                      type="text"
+                      name="customerid"
+                      placeholder="Customer ID"
+                      {...register("customerid", { required: true })}
+                    ></input>
+                  </div>
+                  <div>
+                    <input
+                      type="password"
+                      name="password"
+                      placeholder="Password"
+                      {...register("password", { required: true })}
+                    ></input>
+                  </div>
+                </>
+              )}
               <div>
                 <button>Submit</button>
               </div>
