@@ -2,15 +2,14 @@ import axios from "axios";
 import { useForm } from "react-hook-form";
 import { Modal } from "antd";
 import React, { useState } from "react";
+import { FaUser, FaLock, FaArrowCircleRight } from "react-icons/fa";
+// import { useHistory } from 'react-router-dom';
+import Burgermenu from "./dashboard/Dashboard";
 const Login = () => {
-  const {
-    register,
-    handleSubmit,
-    reset,
-    // watch,
-    // formState: { errors },
-  } = useForm();
+  const { register, handleSubmit, reset } = useForm();
   const [visible, setVisible] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [items, setItems] = useState("");
   const handleOk = () => {
     setVisible(false);
   };
@@ -42,7 +41,7 @@ const Login = () => {
       },
     });
   };
-  const [userform, setUserform] = useState(false);
+  //   const history = useHistory();
   const onSubmit = async (data) => {
     const value = {
       method: "login",
@@ -50,31 +49,20 @@ const Login = () => {
         ...data,
       },
     };
-    const jsonString = JSON.stringify(value);
+    let items = JSON.stringify(value);
     try {
       const res = await axios
         .post(
-          `https://bpartner.in/personal/bpartner/imeilogger/getipaddress.php`,
-          {
-            ...data,
-          }
+          `http://106.51.2.145:2081/Dlite_Kot/Service1.svc/webreport`,
+          items
         )
         .then((data) => data)
-        .then((response) => response?.data);
-      if (res.Available === "Yes") {
-        setUserform(true);
-      } else {
-        showErrorModal();
-      }
-
-      if (userform === true && res.Available === "Yes") {
-        const products = await axios.post(
-          `http://106.51.2.145:2081/Dlite_Kot/Service1.svc/webreport`,
-          {
-            jsonString,
-          }
-        );
-        console.log("products", products);
+        .then((response) => response?.data?.status_result);
+      console.log("res", res);
+      if (res) {
+        setItems(res);
+        showsuccessModal();
+        setOpen(true);
       }
     } catch (errors) {
       if (errors) {
@@ -83,32 +71,28 @@ const Login = () => {
     }
     reset();
   };
+
   return (
     <>
-      <div className="container">
-        <div className="login-section">
-          <div className="login-container">
-            <form className="login-form" onSubmit={handleSubmit(onSubmit)}>
-              {!userform ? (
-                <div>
-                  <input
-                    type="text"
-                    name="customerid"
-                    placeholder="Customer ID"
-                    {...register("customerid", { required: true })}
-                  ></input>
-                </div>
-              ) : (
-                <>
-                  <div>
+      {!open ? (
+        <div className="container">
+          <div className="login-section">
+            <div className="login-container">
+              <div>
+                <h4 className="logo-text">BPalSoftTech</h4>
+                <form className="login-form" onSubmit={handleSubmit(onSubmit)}>
+                  <p>Sign in to start your session</p>
+                  <div className="user-input-section">
+                    <FaUser />
                     <input
                       type="text"
-                      name="customerid"
-                      placeholder="Customer ID"
-                      {...register("customerid", { required: true })}
+                      name="UserName"
+                      placeholder="UserName"
+                      {...register("userid", { required: true })}
                     ></input>
                   </div>
-                  <div>
+                  <div className="password-input-section">
+                    <FaLock />
                     <input
                       type="password"
                       name="password"
@@ -116,16 +100,20 @@ const Login = () => {
                       {...register("password", { required: true })}
                     ></input>
                   </div>
-                </>
-              )}
-              <div>
-                <button>Submit</button>
+                  <div style={{ display: "flex", justifyContent: "center" }}>
+                    <button>
+                      Submit <FaArrowCircleRight />
+                    </button>
+                  </div>
+                </form>
+                <Modal show={visible} onOk={handleOk}></Modal>
               </div>
-            </form>
-            <Modal show={visible} onOk={handleOk}></Modal>
+            </div>
           </div>
         </div>
-      </div>
+      ) : (
+        <Burgermenu data={items} />
+      )}
     </>
   );
 };

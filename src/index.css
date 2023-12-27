@@ -24,7 +24,8 @@ code {
   text-align: center;
   width: 500px;
   padding: 40px;
-  background:#345a7c;
+  background: #345a7c;
+  border-radius:20px;
 }
 
 .login-form input {
@@ -33,20 +34,59 @@ code {
   border: 1px solid white;
   padding-left: 20px;
   box-sizing: border-box;
-  margin-top: 20px;
+  border-radius:30px;
+  /* margin-top: 20px; */
 }
 .login-form button {
   background-color: #ff5500;
   color: white;
   border: 1px solid #ff5500;
   margin-top: 20px;
-  width: 100%;
+  width: 50%;
   height: 40px;
   cursor: pointer;
   border-width: 2px 2px 2px 2px;
   text-transform: uppercase;
   transition: all 0.2s;
+  border-radius:30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 3px;
 }
 .login-form input:focus {
   outline: none;
+}
+
+.login-form p {
+  color: white;
+  font-weight: 500;
+  text-transform: uppercase;
+  margin-bottom: 30px;
+}
+
+.logo-text {
+  text-align: center;
+  font-size: 30px;
+  color: #345a7c;
+}
+
+.user-input-section,
+.password-input-section {
+  margin-top: 20px;
+  position: relative;
+}
+.user-input-section svg,
+.password-input-section svg {
+  position: absolute;
+  left: 94%;
+  top: 33%;
+  color: #345a7c;
+  font-weight: bold;
+}
+
+@media (min-width: 320px) and (max-width: 1200px) {
+  .login-form {
+    width: auto;
+  }
 }
