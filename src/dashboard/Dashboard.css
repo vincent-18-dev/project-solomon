@@ -15,7 +15,7 @@ body{
   display: flex;
 }
 .menubar-section {
-  width:20%;
+  width:100%;
   border: 1px solid #353a40;
   background: #353a40;
   height: 100%;
@@ -64,4 +64,9 @@ body{
 }
 .sub-menu li{
     list-style: disc;
+}
+
+
+.Dropdown_dropdown__vST0F{
+  margin: 30px;
 }
