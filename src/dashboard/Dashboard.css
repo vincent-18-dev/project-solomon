@@ -70,3 +70,10 @@ body{
 .Dropdown_dropdown__vST0F{
   margin: 30px;
 }
+
+.Dropdown_dropdown__vST0F .Dropdown_menu__71pwC{
+  min-width:300px !important;
+}
+.Submenu_submenu__INV1Y{
+  min-width:300px !important;
+}
