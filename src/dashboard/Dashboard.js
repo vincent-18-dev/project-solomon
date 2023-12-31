@@ -2,12 +2,14 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button, Drawer, Menu as AntMenu } from "antd";
 import { CSSTransition } from "react-transition-group";
+import { useForm } from "react-hook-form";
 import {
   CodepenOutlined,
   CrownOutlined,
   AppstoreOutlined,
   MenuUnfoldOutlined,
   MenuFoldOutlined,
+  FilterFilled,
 } from "@ant-design/icons";
 import "./Dashboard.css";
 
@@ -73,12 +75,52 @@ const Dashboard = () => {
     </div>
   );
 
+  const { register, handleSubmit, reset } = useForm();
+  const onSubmit = async (data) => {
+    try {
+      console.log("data", data);
+    } catch (errors) {}
+    reset();
+  };
   return (
     <>
       <div className="dashboard-container">
         <div className="dashboard-section">
           <div>
-            <Button onClick={LogoutFun}>Log out</Button>
+            {/* <div className="header-componets">
+              <Button onClick={LogoutFun}>Log out</Button>
+            </div> */}
+            <div className="date-filter-section">
+              <form
+                className="filter-date-form"
+                onSubmit={handleSubmit(onSubmit)}
+              >
+                <div className="date-input-section">
+                  <label>From</label>
+                  <input
+                    type="date"
+                    name="date"
+                    {...register("userid", { required: true })}
+                  ></input>
+                </div>
+                <div className="date-input-section">
+                  <label>To</label>
+                  <input
+                    type="date"
+                    name="date"
+                    {...register("password", { required: true })}
+                  ></input>
+                </div>
+                <div style={{ display: "flex", justifyContent: "center" }}>
+                  <button>
+                    Filter{" "}
+                    <FilterFilled
+                      style={{ fontSize: "14px", paddingLeft: "5px" }}
+                    />
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
           <Drawer
             title={drawerTitle}

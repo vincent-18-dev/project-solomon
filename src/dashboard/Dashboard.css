@@ -18,6 +18,7 @@
   width: 75%;
   border: 1px solid red;
   box-sizing: border-box;
+  height: 100vh;
 }
 .dashboard-container {
   display: flex;
@@ -114,12 +115,66 @@
   pointer-events: none !important;
 }
 
+.filter-date-form {
+  display: flex;
+  width: 55%;
+  justify-content: space-between;
+}
+.date-filter-section {
+  display: flex;
+  justify-content: center;
+  margin-top: 50px;
+}
+.filter-date-form input {
+  background:#345a7c;
+  text-transform: uppercase;
+  padding: 12px 15px;
+  width: 200px;
+  font-size: 16px;
+  border-radius: 5px;
+  /* border: 1px solid #ff5500; */
+  color: white;
+  border: none;
+}
+.filter-date-form input:focus{
+  outline: none;
+}
+.filter-date-form label{
+  padding-right: 15px;
+  font-weight: 500;
+  font-size: 18px;
+  color: #345a7c;
+}
+.filter-date-form button{
+  width: 150px;
+  /* margin-left: 20px; */
+  font-size: 16px;
+  cursor: pointer;
+  background: #ff5500;
+  border: none;
+  border-radius: 5px;
+  color: white;
+  font-weight: 600;
+}
+
+::-webkit-calendar-picker-indicator{
+  background-color: white;
+  padding:5px;
+  border-radius:3px;
+  cursor: pointer;
+}
+.header-componet{
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+  padding: 30px;
+  text-align: end;
+  background: #345a7c;
+}
 @media (min-width: 768px) {
   .mobile-button {
     display: none;
   }
 }
 
-.anticon.anticon-close{
+/* .anticon.anticon-close {
   display: none !important;
-}
+} */
