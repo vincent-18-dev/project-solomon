@@ -3,13 +3,13 @@ import { useNavigate } from "react-router-dom";
 import { Button, Drawer, Menu as AntMenu } from "antd";
 import { CSSTransition } from "react-transition-group";
 import {
-  MailOutlined,
-  SettingOutlined,
+  CodepenOutlined,
+  CrownOutlined,
   AppstoreOutlined,
   MenuUnfoldOutlined,
   MenuFoldOutlined,
 } from "@ant-design/icons";
-// import "./YourCSSFile.css";
+import "./Dashboard.css";
 
 const Dashboard = () => {
   const storedData = localStorage.getItem("data");
@@ -26,7 +26,9 @@ const Dashboard = () => {
   };
 
   const onClose = () => {
-    setOpen(false);
+    if (window.innerWidth < 768) {
+      setOpen(false);
+    }
   };
 
   const LogoutFun = () => {
@@ -61,73 +63,91 @@ const Dashboard = () => {
     setMenuData(initialMenu);
   };
 
-  const handleSubMenuClick = () => {
-    setCollapsed(!collapsed);
-  };
-
-  const renderNestedSubmenus = (nestedSubmenus) => {
-    return nestedSubmenus.map((nestedSubmenu) => (
-      <AntMenu.Item key={nestedSubmenu.id}>
-        {nestedSubmenu.Menu_Caption}
-      </AntMenu.Item>
-    ));
-  };
+  const drawerTitle = (
+    <div>
+      <img
+        src="/images/trolley.png"
+        alt="Your Image Alt Text"
+        style={{ width: 50, height: 50, marginRight: 16 }}
+      />
+    </div>
+  );
 
   return (
     <>
-      <Drawer
-        title={`${size} Drawer`}
-        placement="left"
-        size={size}
-        visible={open}
-        onClose={onClose}
-        extra={
-          <div style={{ textAlign: "right" }}>
-            <Button type="primary" onClick={onClose}>
-              OK
-            </Button>
+      <div className="dashboard-container">
+        <div className="dashboard-section">
+          <div>
+            <Button onClick={LogoutFun}>Log out</Button>
           </div>
-        }
-      >
-        <CSSTransition in={open} timeout={300} classNames="menu" unmountOnExit>
-          <AntMenu mode="inline" theme="dark" inlineCollapsed={collapsed}>
-            {menuData.map((value) => (
-              <AntMenu.SubMenu
-                key={value.Menu_Caption}
-                title={value.Menu_Caption}
-                icon={<AppstoreOutlined />}
-              >
-                {value.submenus.map((subItem) => (
-                  <React.Fragment key={subItem.id}>
-                    <AntMenu.Item
-                      key={subItem.id}
-                      icon={<MailOutlined />}
-                      onClick={handleSubMenuClick}
-                    >
-                      {subItem.Menu_Caption}
-                    </AntMenu.Item>
-                    {subItem.nestedSubmenus &&
-                      subItem.nestedSubmenus.length > 0 && (
-                        <AntMenu.SubMenu
-                          key={`nested_${subItem.id}`}
-                          title="Nested Submenus"
-                          icon={<SettingOutlined />}
+          <Drawer
+            title={drawerTitle}
+            placement="left"
+            onClose={onClose}
+            open={open}
+          >
+            <CSSTransition
+              in={open}
+              timeout={300}
+              classNames="menu"
+              unmountOnExit
+            >
+              <AntMenu mode="inline" theme="dark">
+                {menuData.map((value) => (
+                  <AntMenu.SubMenu
+                    style={{ fontSize: "18px" }}
+                    key={value.Menu_Caption}
+                    title={value.Menu_Caption}
+                    icon={<AppstoreOutlined />}
+                  >
+                    {value.submenus.map((subItem) => (
+                      <React.Fragment key={subItem.id}>
+                        <AntMenu.Item
+                          style={{ paddingLeft: "40px" }}
+                          key={subItem.id}
+                          icon={<CrownOutlined />}
+                          onClick={() => navigate(subItem.YourPageRoute)}
                         >
-                          {renderNestedSubmenus(subItem.nestedSubmenus)}
-                        </AntMenu.SubMenu>
-                      )}
-                  </React.Fragment>
+                          {subItem.Menu_Caption}
+                        </AntMenu.Item>
+                        {subItem.nestedSubmenus &&
+                          subItem.nestedSubmenus.length > 0 && (
+                            <React.Fragment key={subItem.id}>
+                              <AntMenu.SubMenu
+                                style={{ fontSize: "15px", paddingLeft: "0px" }}
+                                title={subItem.Menu_Caption}
+                                icon={<CodepenOutlined />}
+                              >
+                                {subItem.nestedSubmenus.map((nestedSubmenu) => (
+                                  <AntMenu.Item
+                                    style={{ paddingLeft: "48px" }}
+                                    key={nestedSubmenu.id}
+                                    icon={<CodepenOutlined />}
+                                    onClick={() =>
+                                      navigate(nestedSubmenu.YourPageRoute)
+                                    }
+                                  >
+                                    {nestedSubmenu.Menu_Caption}
+                                  </AntMenu.Item>
+                                ))}
+                              </AntMenu.SubMenu>
+                            </React.Fragment>
+                          )}
+                      </React.Fragment>
+                    ))}
+                  </AntMenu.SubMenu>
                 ))}
-              </AntMenu.SubMenu>
-            ))}
-          </AntMenu>
-        </CSSTransition>
-      </Drawer>
-      <div className="dashboard-section">
-        <Button type="primary" onClick={showDefaultDrawer}>
-          {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-        </Button>
-        <Button onClick={LogoutFun}>Log out</Button>
+              </AntMenu>
+            </CSSTransition>
+          </Drawer>
+          <Button
+            type="primary"
+            onClick={showDefaultDrawer}
+            className="mobile-button"
+          >
+            {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+          </Button>
+        </div>
       </div>
     </>
   );
