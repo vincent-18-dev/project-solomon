@@ -1,38 +1,27 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Button, Drawer, Menu as AntMenu } from "antd";
-import { CSSTransition } from "react-transition-group";
+import { Row, Col, Layout, Menu } from "antd";
 import { useForm } from "react-hook-form";
+import * as HttpServices from "../service/Service";
+import "./Dashboard.css";
 import {
+  LogoutOutlined,
   CodepenOutlined,
-  CrownOutlined,
   AppstoreOutlined,
-  MenuUnfoldOutlined,
-  MenuFoldOutlined,
+  CrownOutlined,
   FilterFilled,
 } from "@ant-design/icons";
-import "./Dashboard.css";
+import SalesReport from "../report/SalesReport";
+const { Header, Sider, Content } = Layout;
+const { SubMenu } = Menu;
 
 const Dashboard = () => {
   const storedData = localStorage.getItem("data");
   const getData = JSON.parse(storedData) || [];
   const [menuData, setMenuData] = useState([]);
-  const [open, setOpen] = useState(true);
-  const [size, setSize] = useState("default");
-  const [collapsed, setCollapsed] = useState(false);
+  const [menuid, setMenuid] = useState("");
+  const [report, setReport] = useState([]);
   const navigate = useNavigate();
-
-  const showDefaultDrawer = () => {
-    setSize("default");
-    setOpen(true);
-  };
-
-  const onClose = () => {
-    if (window.innerWidth < 768) {
-      setOpen(false);
-    }
-  };
-
   const LogoutFun = () => {
     localStorage.removeItem("data");
     navigate("/");
@@ -61,136 +50,169 @@ const Dashboard = () => {
       }
       return acc;
     }, []);
-
     setMenuData(initialMenu);
   };
-
-  const drawerTitle = (
-    <div>
-      <img
-        src="/images/trolley.png"
-        alt="Your Image Alt Text"
-        style={{ width: 50, height: 50, marginRight: 16 }}
-      />
-    </div>
-  );
 
   const { register, handleSubmit, reset } = useForm();
   const onSubmit = async (data) => {
     try {
-      console.log("data", data);
-    } catch (errors) {}
-    reset();
+      const filter = {
+        method: "report",
+        data: {
+          repname: "soloserve",
+          repstatus: "refresh",
+          menuid: menuid,
+          menuname: "",
+          ...data,
+        },
+      };
+      let filterInfo = await HttpServices.search(filter);
+      if (filterInfo.status === 200 && filterInfo?.data?.status_result !== "") {
+        setReport(filterInfo?.data?.status_result);
+        console.log("filterInfo", filterInfo);
+        const report_data = report?.data.map((value) => {
+          if(value)
+          console.log("value", value);
+        });
+      }
+    } catch (errors) {
+      console.log({ errors });
+    }
+    // reset();
   };
+
+  // console.log(report, "menuid");
   return (
     <>
-      <div className="dashboard-container">
-        <div className="dashboard-section">
-          <div>
-            {/* <div className="header-componets">
-              <Button onClick={LogoutFun}>Log out</Button>
-            </div> */}
-            <div className="date-filter-section">
-              <form
-                className="filter-date-form"
-                onSubmit={handleSubmit(onSubmit)}
-              >
-                <div className="date-input-section">
-                  <label>From</label>
-                  <input
-                    type="date"
-                    name="date"
-                    {...register("userid", { required: true })}
-                  ></input>
-                </div>
-                <div className="date-input-section">
-                  <label>To</label>
-                  <input
-                    type="date"
-                    name="date"
-                    {...register("password", { required: true })}
-                  ></input>
-                </div>
-                <div style={{ display: "flex", justifyContent: "center" }}>
-                  <button>
-                    Filter{" "}
-                    <FilterFilled
-                      style={{ fontSize: "14px", paddingLeft: "5px" }}
-                    />
-                  </button>
-                </div>
-              </form>
-            </div>
+      <Layout style={{ minHeight: "100vh" }}>
+        <Sider trigger={null} collapsible>
+          <div className="logo" />
+          <div className="dashboard-name">
+            {/* {collapsed ? 'Dashboard' : 'Your Full Dashboard Name'} */}
+            {/* <img className="bpal_logo" src="/images/Bpal.png" alt="Logo" /> */}
           </div>
-          <Drawer
-            title={drawerTitle}
-            placement="left"
-            onClose={onClose}
-            open={open}
-          >
-            <CSSTransition
-              in={open}
-              timeout={300}
-              classNames="menu"
-              unmountOnExit
-            >
-              <AntMenu mode="inline" theme="dark">
-                {menuData.map((value) => (
-                  <AntMenu.SubMenu
-                    style={{ fontSize: "18px" }}
-                    key={value.Menu_Caption}
-                    title={value.Menu_Caption}
+          <div className="logo" />
+          {report?.data?.length > 0 ? (
+            <>
+              <p>hello</p>
+            </>
+          ) : (
+            <>
+              <Menu theme="dark" mode="inline">
+                {menuData.map((menuItem, index) => (
+                  <SubMenu
+                    key={`submenu-${index + 1}`}
+                    title={menuItem.Menu_Caption}
                     icon={<AppstoreOutlined />}
                   >
-                    {value.submenus.map((subItem) => (
-                      <React.Fragment key={subItem.id}>
-                        <AntMenu.Item
-                          style={{ paddingLeft: "40px" }}
-                          key={subItem.id}
+                    {menuItem.submenus.map((subItem, subIndex) => (
+                      <React.Fragment
+                        key={`submenu-item-${index + 1}-${subIndex + 1}`}
+                      >
+                        <Menu.Item
+                          key={`submenu-item-${index + 1}-${subIndex + 1}`}
+                          onClick={() => setMenuid(subItem.Menu_Id)}
                           icon={<CrownOutlined />}
-                          onClick={() => navigate(subItem.YourPageRoute)}
                         >
                           {subItem.Menu_Caption}
-                        </AntMenu.Item>
+                        </Menu.Item>
                         {subItem.nestedSubmenus &&
                           subItem.nestedSubmenus.length > 0 && (
-                            <React.Fragment key={subItem.id}>
-                              <AntMenu.SubMenu
-                                style={{ fontSize: "15px", paddingLeft: "0px" }}
-                                title={subItem.Menu_Caption}
-                                icon={<CodepenOutlined />}
-                              >
-                                {subItem.nestedSubmenus.map((nestedSubmenu) => (
-                                  <AntMenu.Item
-                                    style={{ paddingLeft: "48px" }}
-                                    key={nestedSubmenu.id}
-                                    icon={<CodepenOutlined />}
-                                    onClick={() =>
-                                      navigate(nestedSubmenu.YourPageRoute)
-                                    }
-                                  >
-                                    {nestedSubmenu.Menu_Caption}
-                                  </AntMenu.Item>
-                                ))}
-                              </AntMenu.SubMenu>
-                            </React.Fragment>
+                            <SubMenu
+                              key={`nested-submenu-${index + 1}`}
+                              title={subItem.Menu_Caption}
+                            >
+                              {subItem.nestedSubmenus.map((nestedSubmenu) => (
+                                <Menu.Item
+                                  style={{ paddingLeft: "48px" }}
+                                  key={nestedSubmenu.id}
+                                  icon={<CodepenOutlined />}
+                                  onClick={() =>
+                                    setMenuid(nestedSubmenu.Menu_Id)
+                                  }
+                                >
+                                  {nestedSubmenu.Menu_Caption}
+                                </Menu.Item>
+                              ))}
+                            </SubMenu>
                           )}
                       </React.Fragment>
                     ))}
-                  </AntMenu.SubMenu>
+                  </SubMenu>
                 ))}
-              </AntMenu>
-            </CSSTransition>
-          </Drawer>
-          <Button
-            type="primary"
-            onClick={showDefaultDrawer}
-            className="mobile-button"
-          >
-            {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-          </Button>
-        </div>
-      </div>
+              </Menu>
+            </>
+          )}
+        </Sider>
+        <Layout className="site-layout">
+          <Header className="site-layout-background" style={{ padding: 0 }}>
+            <Row align="middle">
+              <Col span={22}>
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <img
+                    className="bpal_logo"
+                    src="/images/Bpal.png"
+                    alt="Logo"
+                  />
+                </div>
+              </Col>
+              <Col span={2}>
+                <LogoutOutlined
+                  style={{ fontSize: "25px", color: "#FFF", cursor: "pointer" }}
+                  color="#FFF"
+                  onClick={LogoutFun}
+                />
+              </Col>
+            </Row>
+          </Header>
+          <Content style={{ margin: "16px" }}>
+            <div style={{ padding: 24, background: "#fff", minHeight: 360 }}>
+              {menuid ? (
+                <>
+                  <div className="date-filter-section">
+                    <form
+                      className="filter-date-form"
+                      onSubmit={handleSubmit(onSubmit)}
+                    >
+                      <div className="date-input-section">
+                        <label>From</label>
+                        <input
+                          type="date"
+                          name="date"
+                          {...register("fromdate", { required: true })}
+                        ></input>
+                      </div>
+                      <div className="date-input-section">
+                        <label>To</label>
+                        <input
+                          type="date"
+                          name="date"
+                          {...register("todate", { required: true })}
+                        ></input>
+                      </div>
+                      <div
+                        style={{ display: "flex", justifyContent: "center" }}
+                      >
+                        <button>
+                          Filter{" "}
+                          <FilterFilled
+                            style={{ fontSize: "16px", paddingLeft: "5px" }}
+                          />
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+                  <div>
+                    <SalesReport />
+                  </div>
+                </>
+              ) : (
+                <img src="/images/grocery.jpg" className="dashboard-image" />
+              )}
+            </div>
+          </Content>
+        </Layout>
+      </Layout>
     </>
   );
 };

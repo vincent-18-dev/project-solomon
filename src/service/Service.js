@@ -15,3 +15,10 @@ export async function user(items) {
     JSON?.stringify(items)
   );
 }
+
+export async function search(filter) {
+  return await axios.post(
+    `http://106.51.2.145:2081/Dlite_Kot/Service1.svc/webreport`,
+    JSON?.stringify(filter)
+  );
+}

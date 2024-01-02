@@ -117,7 +117,7 @@
 
 .filter-date-form {
   display: flex;
-  width: 55%;
+  gap:35px;
   justify-content: space-between;
 }
 .date-filter-section {
@@ -126,29 +126,29 @@
   margin-top: 50px;
 }
 .filter-date-form input {
-  background:#345a7c;
+  background: #345a7c;
   text-transform: uppercase;
-  padding: 12px 15px;
-  width: 200px;
-  font-size: 16px;
+  padding: 12px 20px;
+  width: 250px;
+  font-size: 20px;
   border-radius: 5px;
   /* border: 1px solid #ff5500; */
   color: white;
   border: none;
 }
-.filter-date-form input:focus{
+.filter-date-form input:focus {
   outline: none;
 }
-.filter-date-form label{
+.filter-date-form label {
   padding-right: 15px;
   font-weight: 500;
-  font-size: 18px;
+  font-size: 20px;
   color: #345a7c;
 }
-.filter-date-form button{
-  width: 150px;
+.filter-date-form button {
+  width: 200px;
   /* margin-left: 20px; */
-  font-size: 16px;
+  font-size: 20px;
   cursor: pointer;
   background: #ff5500;
   border: none;
@@ -157,21 +157,37 @@
   font-weight: 600;
 }
 
-::-webkit-calendar-picker-indicator{
+::-webkit-calendar-picker-indicator {
   background-color: white;
-  padding:5px;
-  border-radius:3px;
+  padding: 5px;
+  border-radius: 3px;
   cursor: pointer;
 }
-.header-componet{
+.header-componet {
   box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
   padding: 30px;
   text-align: end;
   background: #345a7c;
 }
+.dashboard-image {
+  width: 100%;
+}
+.bpal_logo {
+  width: 20%;
+}
+.ant-menu-submenu.ant-menu-submenu-inline {
+  font-size: 18px;
+  color: white;
+}
 @media (min-width: 768px) {
   .mobile-button {
     display: none;
+  }
+}
+
+@media screen and (min-width: 1200px) {
+  .ant-layout-sider.ant-layout-sider-dark {
+    min-width: 300px !important;
   }
 }
 
