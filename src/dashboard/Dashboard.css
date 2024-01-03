@@ -117,7 +117,7 @@
 
 .filter-date-form {
   display: flex;
-  gap:35px;
+  gap: 35px;
   justify-content: space-between;
 }
 .date-filter-section {
@@ -189,6 +189,25 @@
   .ant-layout-sider.ant-layout-sider-dark {
     min-width: 300px !important;
   }
+}
+
+.ant-table-thead th {
+  background: #345a7c !important;
+  color: white !important;
+}
+.ant-table-thead td {
+  background: #fafafa !important;
+  border: 1px solid #f0f0f0 !important;
+}
+.toggle-btn{
+  padding-bottom: 50px;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  align-items: center;
+}
+.toggle-btn span{
+  font-size: 20px;
 }
 
 /* .anticon.anticon-close {
