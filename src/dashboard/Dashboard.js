@@ -69,9 +69,15 @@ const Dashboard = () => {
           ...data,
         },
       };
+      localStorage.setItem("filter-input", JSON.stringify(filter));
       let filterInfo = await HttpServices.search(filter);
       if (filterInfo.status === 200 && filterInfo?.data?.status_result !== "") {
+        localStorage.setItem(
+          "side-bar",
+          JSON.stringify(filterInfo?.data?.status_result)
+        );
         setReport(filterInfo?.data?.status_result);
+        navigate("/SalesReport");
       }
     } catch (error) {
       console.error("Error fetching report data", error);
@@ -96,9 +102,9 @@ const Dashboard = () => {
       console.error("Error fetching table data", error);
     }
   };
-  const onChange = (checked) => {
-    setChecked(checked);
-  };
+  // const onChange = (checked) => {
+  //   setChecked(checked);
+  // };
   useEffect(() => {
     menuFilter();
   }, []);
@@ -112,7 +118,7 @@ const Dashboard = () => {
             {/* <img className="bpal_logo" src="/images/Bpal.png" alt="Logo" /> */}
           </div>
           <div className="logo" />
-          {report?.data?.length > 0 ? (
+          {/* {report?.data?.length > 0 ? (
             <>
               <Menu theme="dark" mode="inline">
                 {report.data.map((value, parentIndex) => (
@@ -138,52 +144,50 @@ const Dashboard = () => {
               </Menu>
             </>
           ) : (
-            <>
-              <Menu theme="dark" mode="inline">
-                {menuData.map((menuItem, index) => (
-                  <SubMenu
-                    key={`submenu-${index + 1}`}
-                    title={menuItem.Menu_Caption}
-                    icon={<AppstoreOutlined />}
+            <> */}
+          <Menu theme="dark" mode="inline">
+            {menuData.map((menuItem, index) => (
+              <SubMenu
+                key={`submenu-${index + 1}`}
+                title={menuItem.Menu_Caption}
+                icon={<AppstoreOutlined />}
+              >
+                {menuItem.submenus.map((subItem, subIndex) => (
+                  <React.Fragment
+                    key={`submenu-item-${index + 1}-${subIndex + 1}`}
                   >
-                    {menuItem.submenus.map((subItem, subIndex) => (
-                      <React.Fragment
-                        key={`submenu-item-${index + 1}-${subIndex + 1}`}
-                      >
-                        <Menu.Item
-                          key={`submenu-item-${index + 1}-${subIndex + 1}`}
-                          onClick={() => setMenuid(subItem.Menu_Id)}
-                          icon={<CrownOutlined />}
+                    <Menu.Item
+                      key={`submenu-item-${index + 1}-${subIndex + 1}`}
+                      onClick={() => setMenuid(subItem.Menu_Id)}
+                      icon={<CrownOutlined />}
+                    >
+                      {subItem.Menu_Caption}
+                    </Menu.Item>
+                    {subItem.nestedSubmenus &&
+                      subItem.nestedSubmenus.length > 0 && (
+                        <SubMenu
+                          key={`nested-submenu-${index + 1}`}
+                          title={subItem.Menu_Caption}
                         >
-                          {subItem.Menu_Caption}
-                        </Menu.Item>
-                        {subItem.nestedSubmenus &&
-                          subItem.nestedSubmenus.length > 0 && (
-                            <SubMenu
-                              key={`nested-submenu-${index + 1}`}
-                              title={subItem.Menu_Caption}
+                          {subItem.nestedSubmenus.map((nestedSubmenu) => (
+                            <Menu.Item
+                              style={{ paddingLeft: "48px" }}
+                              key={nestedSubmenu.id}
+                              icon={<CodepenOutlined />}
+                              onClick={() => setMenuid(nestedSubmenu.Menu_Id)}
                             >
-                              {subItem.nestedSubmenus.map((nestedSubmenu) => (
-                                <Menu.Item
-                                  style={{ paddingLeft: "48px" }}
-                                  key={nestedSubmenu.id}
-                                  icon={<CodepenOutlined />}
-                                  onClick={() =>
-                                    setMenuid(nestedSubmenu.Menu_Id)
-                                  }
-                                >
-                                  {nestedSubmenu.Menu_Caption}
-                                </Menu.Item>
-                              ))}
-                            </SubMenu>
-                          )}
-                      </React.Fragment>
-                    ))}
-                  </SubMenu>
+                              {nestedSubmenu.Menu_Caption}
+                            </Menu.Item>
+                          ))}
+                        </SubMenu>
+                      )}
+                  </React.Fragment>
                 ))}
-              </Menu>
-            </>
-          )}
+              </SubMenu>
+            ))}
+          </Menu>
+          {/* </>
+          )} */}
         </Sider>
         <Layout className="site-layout">
           <Header className="site-layout-background" style={{ padding: 0 }}>
@@ -198,11 +202,11 @@ const Dashboard = () => {
                 </div>
               </Col>
               <Col span={2}>
-                <LogoutOutlined 
+                <LogoutOutlined
                   style={{ fontSize: "25px", color: "#FFF", cursor: "pointer" }}
                   color="#FFF"
                   onClick={LogoutFun}
-                /> 
+                />
                 {/* <span>LOGOUT</span> */}
               </Col>
             </Row>
@@ -249,7 +253,7 @@ const Dashboard = () => {
                 <img src="/images/grocery.jpg" className="dashboard-image" />
               )}
               <div style={{ marginTop: "100px" }}>
-                {tabledata.status === 200 && (
+                {/* {tabledata.status === 200 && (
                   <>
                     <div className="toggle-btn">
                       <span>Table</span>{" "}
@@ -264,7 +268,7 @@ const Dashboard = () => {
                     </div>
                     <TableFunction tableData={tabledata} />
                   </>
-                )}
+                )} */}
               </div>
             </div>
           </Content>

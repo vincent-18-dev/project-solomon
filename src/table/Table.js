@@ -1,7 +1,10 @@
-import React from "react";
-import { Table } from "antd";
+import React, { useState } from "react";
+import { Table, Button } from "antd";
+
 const TableFunction = ({ tableData }) => {
-  console.log("table_value", tableData);
+  const [filteredInfo, setFilteredInfo] = useState({});
+  const [sortedInfo, setSortedInfo] = useState({});
+
   if (
     !tableData ||
     !tableData.data ||
@@ -15,6 +18,7 @@ const TableFunction = ({ tableData }) => {
       </div>
     );
   }
+
   const { header, data } = tableData.data.status_result;
   if (!Array.isArray(header) || !Array.isArray(data)) {
     return (
@@ -29,13 +33,17 @@ const TableFunction = ({ tableData }) => {
     dataIndex: item.name,
     // fixed: true,
     width: 150,
-    
   }));
-  console.log("columns", columns);
+
   const dataSource = data.map((item, index) => ({
     key: index,
     ...item,
   }));
+
+  const handleChange = (pagination, filters, sorter) => {
+    setFilteredInfo(filters);
+    setSortedInfo(sorter);
+  };
 
   return (
     <>
@@ -45,8 +53,11 @@ const TableFunction = ({ tableData }) => {
         pagination={false}
         scroll={{
           x: "150%",
-          y: 300,
+          y: 800,
         }}
+        onChange={handleChange}
+        filteredInfo={filteredInfo}
+        sortedInfo={sortedInfo}
       />
     </>
   );
