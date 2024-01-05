@@ -209,7 +209,12 @@
 .toggle-btn span{
   font-size: 20px;
 }
-
+.ant-table-column-sorter.ant-table-column-sorter-full{
+  color:white !important;
+}
+.ant-dropdown-trigger.ant-table-filter-trigger{
+  color:white !important;
+}
 /* .anticon.anticon-close {
   display: none !important;
 } */
