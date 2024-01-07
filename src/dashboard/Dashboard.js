@@ -118,33 +118,6 @@ const Dashboard = () => {
             {/* <img className="bpal_logo" src="/images/Bpal.png" alt="Logo" /> */}
           </div>
           <div className="logo" />
-          {/* {report?.data?.length > 0 ? (
-            <>
-              <Menu theme="dark" mode="inline">
-                {report.data.map((value, parentIndex) => (
-                  <SubMenu
-                    key={`submenu-${parentIndex}`}
-                    title={value.text}
-                    icon={<AppstoreOutlined />}
-                  >
-                    {value.child.map((child, childIndex) => (
-                      <Menu.Item
-                        key={`menu-item-${parentIndex}-${childIndex}`}
-                        onClick={() => {
-                          TableFun(child.name);
-                          // setMenunames(child.name);
-                        }}
-                        icon={<CrownOutlined />}
-                      >
-                        {child.text}
-                      </Menu.Item>
-                    ))}
-                  </SubMenu>
-                ))}
-              </Menu>
-            </>
-          ) : (
-            <> */}
           <Menu theme="dark" mode="inline">
             {menuData.map((menuItem, index) => (
               <SubMenu

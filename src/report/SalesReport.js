@@ -11,6 +11,7 @@ import {
   FilterFilled,
 } from "@ant-design/icons";
 import TableFunction from "../table/Table";
+import BarsDataset from "../charts/BarsDataset";
 
 const { Header, Sider, Content } = Layout;
 const { SubMenu } = Menu;
@@ -24,56 +25,67 @@ const SalesReport = ({}) => {
   const [menuId, setMenuID] = useState(inputValue?.data?.menuid);
   const [isChecked, setChecked] = useState(false);
   const [tableValue, setTableValue] = useState([]);
-  const [menuValue, setmenuName] = useState("");
+  const [isTyping, setIsTyping] = useState(false);
+  // const [Date, setDate] = useState([]);
+  // const [menuValue, setmenuName] = useState("");
   console.log("getInput", inputValue);
   let sideBar = localStorage.getItem("side-bar");
   console.log("side-bar", localStorage.getItem("side-bar"));
   const report = JSON.parse(sideBar) || [];
   const onSubmit = async (data) => {
-    setValue("fromdate", data.fromdate);
-    setValue("todate", data.todate);
-    try {
-      const menuNames = {
-        method: "report",
-        data: {
-          repname: "soloserve",
-          repstatus: "",
-          menuid: menuId,
-          menuname: menuValue,
-          ...data,
-        },
-      };
-      let menuName = await HttpServices.Table(menuNames);
-      console.log("menuNames", menuNames);
-      setTableValue(menuName);
-    } catch (error) {}
+    SetfDate(data.fromdate);
+    SettoDate(data.todate);
+    setIsTyping(false);
+    TableFun();
+    // setValue("fromdate", data.fromdate);
+    // setValue("todate", data.todate);
+    // try {
+    // const menuNames = {
+    //   method: "report",
+    //   data: {
+    //     repname: "soloserve",
+    //     repstatus: "",
+    //     menuid: menuId,
+    //     menuname: menuValue,
+    //     ...data,
+    //   },
+    // };
+    // let menuName = await HttpServices.Table(menuNames);
+    // console.log("menuNames", menuNames);
+    // setTableValue(menuName);
+    // } catch (error) {}
   };
 
+  const handleInputChange = () => {
+    setIsTyping(true);
+  };
   const TableFun = async (childName) => {
-    setmenuName(childName);
-    try {
-      const menuNames = {
-        method: "report",
-        data: {
-          repname: "soloserve",
-          repstatus: "",
-          menuid: menuId,
-          menuname: childName,
-          fromdate: fDate,
-          todate: toDate,
-        },
-      };
-      let menuName = await HttpServices.Table(menuNames);
-      setTableValue(menuName);
-    } catch (error) {
-      console.error("Error fetching table data", error);
+    // setmenuName(childName);
+    // try {
+    if (!childName) {
+      return;
     }
+    const menuNames = {
+      method: "report",
+      data: {
+        repname: "soloserve",
+        repstatus: "",
+        menuid: menuId,
+        menuname: childName,
+        fromdate: fDate,
+        todate: toDate,
+      },
+    };
+    // console.log("date", Date);
+    let menuName = await HttpServices.Table(menuNames);
+    setTableValue(menuName);
+    // } catch (error) {
+    //   console.error("Error fetching table data", error);
+    // }
   };
-
   const onChange = (checked) => {
     setChecked(checked);
   };
-
   const navigate = useNavigate();
   const LogoutFun = () => {
     localStorage.removeItem("data");
@@ -151,6 +163,7 @@ const SalesReport = ({}) => {
                         name="date"
                         defaultValue={inputValue?.data?.fromdate}
                         {...register("fromdate", { required: true })}
+                        onChange={handleInputChange}
                       ></input>
                     </div>
                     <div className="date-input-section">
@@ -160,6 +173,7 @@ const SalesReport = ({}) => {
                         name="date"
                         defaultValue={inputValue?.data?.todate}
                         {...register("todate", { required: true })}
+                        onChange={handleInputChange}
                       ></input>
                     </div>
                     <div style={{ display: "flex", justifyContent: "center" }}>
@@ -174,8 +188,10 @@ const SalesReport = ({}) => {
                 </div>
               </>
               <div style={{ marginTop: "100px" }}>
-                {tableValue.status === 200 &&
-                tableValue.data.status_result !== "" ? (
+                {isTyping ? (
+                  <p>Typing...</p>
+                ) : tableValue.status === 200 &&
+                  tableValue.data.status_result !== "" ? (
                   <>
                     <div className="toggle-btn">
                       <span>Table</span>{" "}
@@ -188,10 +204,18 @@ const SalesReport = ({}) => {
                       />{" "}
                       <span>Chart</span>
                     </div>
-                    <TableFunction tableData={tableValue} />
+                    {isChecked ? (
+                      <>
+                        <div style={{display:"flex"}}>
+                          <BarsDataset barValue={tableValue} />
+                        </div>
+                      </>
+                    ) : (
+                      <TableFunction tableData={tableValue} />
+                    )}
                   </>
                 ) : (
-                  <>Kindly Select type</>
+                " "
                 )}
               </div>
             </div>
