@@ -10,6 +10,7 @@ import {
   CrownOutlined,
   FilterFilled,
 } from "@ant-design/icons";
+import { Spin } from "antd";
 import TableFunction from "../table/Table";
 import BarsDataset from "../charts/BarsDataset";
 
@@ -17,7 +18,7 @@ const { Header, Sider, Content } = Layout;
 const { SubMenu } = Menu;
 
 const SalesReport = ({}) => {
-  const { register, handleSubmit, setValue } = useForm();
+  const { register, handleSubmit } = useForm();
   let getInput = localStorage.getItem("filter-input");
   let inputValue = JSON.parse(getInput) || [];
   const [fDate, SetfDate] = useState(inputValue?.data?.fromdate);
@@ -26,8 +27,8 @@ const SalesReport = ({}) => {
   const [isChecked, setChecked] = useState(false);
   const [tableValue, setTableValue] = useState([]);
   const [isTyping, setIsTyping] = useState(false);
-  // const [Date, setDate] = useState([]);
-  // const [menuValue, setmenuName] = useState("");
+  const [error, setError] = useState(false);
+  const [loading, setLoading] = useState(true);
   console.log("getInput", inputValue);
   let sideBar = localStorage.getItem("side-bar");
   console.log("side-bar", localStorage.getItem("side-bar"));
@@ -37,31 +38,12 @@ const SalesReport = ({}) => {
     SettoDate(data.todate);
     setIsTyping(false);
     TableFun();
-    // setValue("fromdate", data.fromdate);
-    // setValue("todate", data.todate);
-    // try {
-    // const menuNames = {
-    //   method: "report",
-    //   data: {
-    //     repname: "soloserve",
-    //     repstatus: "",
-    //     menuid: menuId,
-    //     menuname: menuValue,
-    //     ...data,
-    //   },
-    // };
-    // let menuName = await HttpServices.Table(menuNames);
-    // console.log("menuNames", menuNames);
-    // setTableValue(menuName);
-    // } catch (error) {}
   };
 
   const handleInputChange = () => {
     setIsTyping(true);
   };
   const TableFun = async (childName) => {
-    // setmenuName(childName);
-    // try {
     if (!childName) {
       return;
     }
@@ -76,12 +58,15 @@ const SalesReport = ({}) => {
         todate: toDate,
       },
     };
-    // console.log("date", Date);
-    let menuName = await HttpServices.Table(menuNames);
-    setTableValue(menuName);
-    // } catch (error) {
-    //   console.error("Error fetching table data", error);
-    // }
+    try {
+      setLoading(true);
+      let menuName = await HttpServices.Table(menuNames);
+      setTableValue(menuName);
+      setLoading(false);
+    } catch (error) {
+      console.log({ error });
+    }
+    setError(true);
   };
   const onChange = (checked) => {
     setChecked(checked);
@@ -92,6 +77,7 @@ const SalesReport = ({}) => {
     navigate("/");
   };
 
+  console.log("tableValue", tableValue);
   return (
     <>
       <Layout style={{ minHeight: "100vh" }}>
@@ -129,13 +115,19 @@ const SalesReport = ({}) => {
         <Layout className="site-layout">
           <Header className="site-layout-background" style={{ padding: 0 }}>
             <Row align="middle">
-              <Col span={22}>
+              <Col span={18}>
                 <div style={{ display: "flex", alignItems: "center" }}>
                   <img
                     className="bpal_logo"
                     src="/images/Bpal.png"
                     alt="Logo"
                   />
+                </div>
+              </Col>
+              <Col span={4}>
+                <div>
+                  <a href="/Dashboard">Dashboard</a>{" "}
+                  <span style={{ color: "white" }}>/ SalesReport</span>
                 </div>
               </Col>
               <Col span={2}>
@@ -188,8 +180,12 @@ const SalesReport = ({}) => {
                 </div>
               </>
               <div style={{ marginTop: "100px" }}>
-                {isTyping ? (
-                  <p>Typing...</p>
+                {isTyping || loading ? (
+                  <>
+                    <div>
+                      <Spin  fullscreen={true}/>
+                    </div>
+                  </>
                 ) : tableValue.status === 200 &&
                   tableValue.data.status_result !== "" ? (
                   <>
@@ -206,7 +202,7 @@ const SalesReport = ({}) => {
                     </div>
                     {isChecked ? (
                       <>
-                        <div style={{display:"flex"}}>
+                        <div style={{ display: "flex" }}>
                           <BarsDataset barValue={tableValue} />
                         </div>
                       </>
@@ -215,7 +211,13 @@ const SalesReport = ({}) => {
                     )}
                   </>
                 ) : (
-                " "
+                  error && (
+                    <>
+                      <div style={{ textAlign: "center" }}>
+                        <img src="/images/N-Data.jpg"></img>
+                      </div>
+                    </>
+                  )
                 )}
               </div>
             </div>

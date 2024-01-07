@@ -24,7 +24,6 @@ const TableFunction = ({ tableData }) => {
       </div>
     );
   }
-
   const columns = header.map((item) => ({
     title: item.caption,
     dataIndex: item.name,
@@ -80,14 +79,26 @@ const TableFunction = ({ tableData }) => {
   }));
   // console.log("columns", columns)
   const filteredData = data.filter((item) => {
+    console.log("item", item.Bill_Date);
     return Object.values(item).some((val) =>
       String(val).toLowerCase().includes(searchText.toLowerCase())
     );
   });
-  const dataSource = filteredData.map((item, index) => ({
-    key: index,
-    ...item,
-  }));
+  const dataSource = filteredData.map((item, index) => {
+    // Assuming Bill_Date is the property you want to format
+    const billDate = new Date(item.Bill_Date);
+    const formattedDate = billDate.toLocaleDateString("en-GB", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    });
+
+    return {
+      key: index,
+      ...item,
+      Bill_Date: formattedDate,
+    };
+  });
   return (
     <>
       <div style={{ textAlign: "end" }}>

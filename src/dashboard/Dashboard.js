@@ -11,8 +11,6 @@ import {
   CrownOutlined,
   FilterFilled,
 } from "@ant-design/icons";
-// import SalesReport from "../report/SalesReport";
-import TableFunction from "../table/Table";
 
 const { Header, Sider, Content } = Layout;
 const { SubMenu } = Menu;
@@ -24,11 +22,9 @@ const Dashboard = () => {
   const [menuData, setMenuData] = useState([]);
   const [menuid, setMenuid] = useState("");
   const [report, setReport] = useState([]);
-  // const [menunames, setMenunames] = useState("");
   const [input, setInput] = useState("");
-  const [tabledata, setTabledata] = useState([]);
+  const [error, setError] = useState(false);
   const { register, handleSubmit } = useForm();
-  const [isChecked, setChecked] = useState(false);
   const LogoutFun = () => {
     localStorage.removeItem("data");
     navigate("/");
@@ -58,6 +54,7 @@ const Dashboard = () => {
 
   const onSubmit = async (data) => {
     setInput(data);
+    setError(true)
     try {
       const filter = {
         method: "report",
@@ -84,30 +81,11 @@ const Dashboard = () => {
     }
   };
 
-  const TableFun = async (childName) => {
-    try {
-      const menuNames = {
-        method: "report",
-        data: {
-          repname: "soloserve",
-          repstatus: "refresh",
-          menuid: menuid,
-          menuname: childName,
-          ...input,
-        },
-      };
-      let menuName = await HttpServices.Table(menuNames);
-      setTabledata(menuName);
-    } catch (error) {
-      console.error("Error fetching table data", error);
-    }
-  };
-  // const onChange = (checked) => {
-  //   setChecked(checked);
-  // };
   useEffect(() => {
     menuFilter();
   }, []);
+
+  console.log("report", report);
   return (
     <>
       <Layout style={{ minHeight: "100vh" }}>
@@ -225,24 +203,13 @@ const Dashboard = () => {
               ) : (
                 <img src="/images/grocery.jpg" className="dashboard-image" />
               )}
-              <div style={{ marginTop: "100px" }}>
-                {/* {tabledata.status === 200 && (
-                  <>
-                    <div className="toggle-btn">
-                      <span>Table</span>{" "}
-                      <Switch
-                        defaultChecked={isChecked}
-                        onChange={onChange}
-                        style={{
-                          background: isChecked ? "#345a7c" : "#bfbfbf",
-                        }}
-                      />{" "}
-                      <span>Chart</span>
-                    </div>
-                    <TableFunction tableData={tabledata} />
-                  </>
-                )} */}
-              </div>
+              {report.length === 0 && error &&(
+                <>
+                  <div style={{ textAlign: "center", marginTop: "100px" }}>
+                    <img src="/images/N-Data.jpg"></img>
+                  </div>
+                </>
+              )}
             </div>
           </Content>
         </Layout>
