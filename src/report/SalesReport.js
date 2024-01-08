@@ -180,7 +180,7 @@ const SalesReport = ({}) => {
                 </div>
               </>
               <div style={{ marginTop: "100px" }}>
-                {isTyping || loading ? (
+                {isTyping  ? (
                   <>
                     <div>
                       <Spin  fullscreen={true}/>
