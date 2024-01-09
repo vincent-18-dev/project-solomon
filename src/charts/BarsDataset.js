@@ -127,18 +127,22 @@ export default function BarsDataset({ barValue }) {
         optionFilterProp="children"
         onChange={handleChange}
         value={selectedChartType}
+        style={{ width: "100px" }}
         options={[
           {
             value: "Bars",
             label: "Bars",
+            style: { fontSize: "15px" },
           },
           {
             value: "Lines",
             label: "Lines",
+            style: { fontSize: "15px" },
           },
           {
             value: "pie",
             label: "Pie",
+            style: { fontSize: "15px" },
           },
         ]}
       />

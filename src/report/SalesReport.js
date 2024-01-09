@@ -29,14 +29,14 @@ const SalesReport = ({}) => {
   const [isTyping, setIsTyping] = useState(false);
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(true);
-  console.log("getInput", inputValue);
+
   let sideBar = localStorage.getItem("side-bar");
-  console.log("side-bar", localStorage.getItem("side-bar"));
   const report = JSON.parse(sideBar) || [];
+
   const onSubmit = async (data) => {
     SetfDate(data.fromdate);
     SettoDate(data.todate);
-    setIsTyping(false);
+    setIsTyping(true); // Set isTyping to true to show loading spinner during API call
     TableFun();
   };
 
@@ -59,25 +59,28 @@ const SalesReport = ({}) => {
       },
     };
     try {
-      setLoading(true);
       let menuName = await HttpServices.Table(menuNames);
       setTableValue(menuName);
-      setLoading(false);
+      setError(true);
+      setIsTyping(false); // Set isTyping to false after API call is complete
+      setChecked(true); // Assuming you want to show the chart by default
     } catch (error) {
       console.log({ error });
+      setLoading(false);
+      setError(true);
     }
-    setError(true);
   };
+
   const onChange = (checked) => {
     setChecked(checked);
   };
+
   const navigate = useNavigate();
   const LogoutFun = () => {
     localStorage.removeItem("data");
     navigate("/");
   };
 
-  console.log("tableValue", tableValue);
   return (
     <>
       <Layout style={{ minHeight: "100vh" }}>
@@ -109,8 +112,6 @@ const SalesReport = ({}) => {
               </SubMenu>
             ))}
           </Menu>
-          {/* </>
-          )} */}
         </Sider>
         <Layout className="site-layout">
           <Header className="site-layout-background" style={{ padding: 0 }}>
@@ -136,7 +137,6 @@ const SalesReport = ({}) => {
                   color="#FFF"
                   onClick={LogoutFun}
                 />
-                {/* <span>LOGOUT</span> */}
               </Col>
             </Row>
           </Header>
@@ -180,12 +180,8 @@ const SalesReport = ({}) => {
                 </div>
               </>
               <div style={{ marginTop: "100px" }}>
-                {isTyping  ? (
-                  <>
-                    <div>
-                      <Spin  fullscreen={true}/>
-                    </div>
-                  </>
+                {isTyping ? (
+                  <Spin />
                 ) : tableValue.status === 200 &&
                   tableValue.data.status_result !== "" ? (
                   <>
@@ -201,22 +197,18 @@ const SalesReport = ({}) => {
                       <span>Chart</span>
                     </div>
                     {isChecked ? (
-                      <>
-                        <div style={{ display: "flex" }}>
-                          <BarsDataset barValue={tableValue} />
-                        </div>
-                      </>
+                      <div style={{ display: "flex" }}>
+                        <BarsDataset barValue={tableValue} />
+                      </div>
                     ) : (
                       <TableFunction tableData={tableValue} />
                     )}
                   </>
                 ) : (
                   error && (
-                    <>
-                      <div style={{ textAlign: "center" }}>
-                        <img src="/images/N-Data.jpg"></img>
-                      </div>
-                    </>
+                    <div style={{ textAlign: "center" }}>
+                      <img src="/images/N-Data.jpg" alt="No Data" />
+                    </div>
                   )
                 )}
               </div>
