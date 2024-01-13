@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect,useRef} from "react";
 import { useNavigate } from "react-router-dom";
 import { Row, Col, Layout, Menu, Switch } from "antd";
 import { useForm } from "react-hook-form";
@@ -28,16 +28,17 @@ const SalesReport = () => {
   const [tableValue, setTableValue] = useState({});
   const [isLoading, setLoading] = useState(false);
   const [currentChildName, setCurrentChildName] = useState("");
-
+  const currentChildNameRef = useRef(currentChildName);
+  console.log("currentChildNameRef",currentChildNameRef);
   let sideBar = localStorage.getItem("side-bar");
   const report = JSON.parse(sideBar) || [];
-
   const onSubmit = async (data, e) => {
     e.preventDefault();
     setFDate(data.fromdate);
     setToDate(data.todate);
     setLoading(true);
-    TableFun(currentChildName);
+    currentChildNameRef.current = currentChildName;
+    await TableFun(currentChildNameRef.current);
   };
 
   const handleInputChange = () => {
@@ -61,6 +62,7 @@ const SalesReport = () => {
     };
     try {
       let menuName = await HttpServices.Table(menuNames);
+      console.log("menuName_check",menuName);
       setTableValue(menuName);
       setLoading(false);
     } catch (error) {
@@ -83,8 +85,11 @@ const SalesReport = () => {
     navigate("/");
   };
   useEffect(() => {
-    TableFun(currentChildName);
+    TableFun(currentChildNameRef.current);
   }, [fDate, toDate, currentChildName]);
+  // useEffect(() => {
+  //   TableFun(currentChildName);
+  // }, [fDate, toDate, currentChildName]);
   return (
     <Layout style={{ minHeight: "100vh" }}>
       <Sider trigger={null} collapsible>
@@ -153,7 +158,7 @@ const SalesReport = () => {
                     type="date"
                     name="date"
                     defaultValue={inputValue?.data?.fromdate}
-                    {...register("fromdate", { required: true })}
+                    {...register("fromdate")}
                     onChange={handleInputChange}
                   ></input>
                 </div>
@@ -163,7 +168,7 @@ const SalesReport = () => {
                     type="date"
                     name="date"
                     defaultValue={inputValue?.data?.todate}
-                    {...register("todate", { required: true })}
+                    {...register("todate")}
                     onChange={handleInputChange}
                   ></input>
                 </div>

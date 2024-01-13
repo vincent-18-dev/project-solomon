@@ -7,6 +7,19 @@ import { PieChart } from "@mui/x-charts/PieChart";
 
 export default function BarsDataset({ barValue }) {
   const [selectedChartType, setSelectedChartType] = React.useState("Bars");
+  if (
+    !barValue ||
+    !barValue.data ||
+    !barValue.data.status_result ||
+    !barValue.data.status_result.header ||
+    !barValue.data.status_result.data
+  ) {
+    return (
+      <div>
+        <p>Error: Invalid data structure</p>
+      </div>
+    );
+  }
 
   if (!barValue.data.status_result.header.ischart) {
     return (
