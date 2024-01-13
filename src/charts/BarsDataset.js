@@ -4,7 +4,20 @@ import { axisClasses } from "@mui/x-charts";
 import { Select } from "antd";
 import { ScatterChart } from "@mui/x-charts/ScatterChart";
 import { PieChart } from "@mui/x-charts/PieChart";
+
 export default function BarsDataset({ barValue }) {
+  const [selectedChartType, setSelectedChartType] = React.useState("Bars");
+
+  if (!barValue.data.status_result.header.ischart) {
+    return (
+      <>
+        <div style={{ textAlign: "center", marginTop: "100px" }}>
+          <img src="/images/N-Data.jpg"></img>
+        </div>
+      </>
+    );
+  }
+
   const chartSetting = {
     yAxis: [
       {
@@ -24,7 +37,6 @@ export default function BarsDataset({ barValue }) {
   };
 
   const datasets = barValue?.data?.status_result?.data?.map((value) => {
-    // console.log("value_params", value);
     const billDate = new Date(value?.Bill_Date);
     const formattedDate = billDate.toLocaleDateString("en-US", {
       year: "numeric",
@@ -60,12 +72,13 @@ export default function BarsDataset({ barValue }) {
     const Data = value?.Bill_Net_Amt ?? 0;
     return { id: index, value: Data, label: formattedDate };
   });
+
   const valueFormatter = (value) => value;
-  const [selectedChartType, setSelectedChartType] = React.useState("Bars");
 
   const handleChange = (value) => {
     setSelectedChartType(value);
   };
+
   const renderChart = () => {
     if (selectedChartType === "Bars") {
       return (
@@ -93,7 +106,7 @@ export default function BarsDataset({ barValue }) {
               label: "BILL AMOUNT",
               data: LinesDataForPieChart.map((item) => ({
                 x: item.value,
-                y: item.value, // Use the same property for x and y for simplicity
+                y: item.value,
                 id: item.id,
               })),
             },
@@ -110,7 +123,6 @@ export default function BarsDataset({ barValue }) {
                 value: item.value,
                 label: item.label,
               })),
-              // [{ id: 0, value: 10, label: "series A" }],
             },
           ]}
           width={1000}
