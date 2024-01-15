@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Row, Col, Layout, Menu, Switch } from "antd";
+import { Row, Col, Layout, Menu, Spin } from "antd";
 import { useForm } from "react-hook-form";
 import * as HttpServices from "../service/Service";
 import "./Dashboard.css";
@@ -11,7 +11,6 @@ import {
   CrownOutlined,
   FilterFilled,
 } from "@ant-design/icons";
-
 const { Header, Sider, Content } = Layout;
 const { SubMenu } = Menu;
 
@@ -25,6 +24,8 @@ const Dashboard = () => {
   const [input, setInput] = useState("");
   const [error, setError] = useState(false);
   const { register, handleSubmit } = useForm();
+  const [loading, setLoading] = useState(false);
+
   const LogoutFun = () => {
     localStorage.removeItem("data");
     navigate("/");
@@ -53,8 +54,9 @@ const Dashboard = () => {
   };
 
   const onSubmit = async (data) => {
+    setLoading(true);
     setInput(data);
-    setError(true)
+    setError(true);
     try {
       const filter = {
         method: "report",
@@ -78,6 +80,7 @@ const Dashboard = () => {
       }
     } catch (error) {
       console.error("Error fetching report data", error);
+      setLoading(false)
     }
   };
 
@@ -86,134 +89,147 @@ const Dashboard = () => {
   }, []);
 
   console.log("report", report);
+  console.log("menuData", menuData);
+
   return (
     <>
-      <Layout style={{ minHeight: "100vh" }}>
-        <Sider trigger={null} collapsible>
-          <div className="logo" />
-          <div className="dashboard-name">
-            {/* {collapsed ? 'Dashboard' : 'Your Full Dashboard Name'} */}
-            {/* <img className="bpal_logo" src="/images/Bpal.png" alt="Logo" /> */}
-          </div>
-          <div className="logo" />
-          <Menu theme="dark" mode="inline">
-            {menuData.map((menuItem, index) => (
-              <SubMenu
-                key={`submenu-${index + 1}`}
-                title={menuItem.Menu_Caption}
-                icon={<AppstoreOutlined />}
-              >
-                {menuItem.submenus.map((subItem, subIndex) => (
-                  <React.Fragment
-                    key={`submenu-item-${index + 1}-${subIndex + 1}`}
-                  >
-                    <Menu.Item
-                      key={`submenu-item-${index + 1}-${subIndex + 1}`}
-                      onClick={() => setMenuid(subItem.Menu_Id)}
-                      icon={<CrownOutlined />}
-                    >
-                      {subItem.Menu_Caption}
-                    </Menu.Item>
-                    {subItem.nestedSubmenus &&
-                      subItem.nestedSubmenus.length > 0 && (
-                        <SubMenu
-                          key={`nested-submenu-${index + 1}`}
-                          title={subItem.Menu_Caption}
-                        >
-                          {subItem.nestedSubmenus.map((nestedSubmenu) => (
-                            <Menu.Item
-                              style={{ paddingLeft: "48px" }}
-                              key={nestedSubmenu.id}
-                              icon={<CodepenOutlined />}
-                              onClick={() => setMenuid(nestedSubmenu.Menu_Id)}
-                            >
-                              {nestedSubmenu.Menu_Caption}
-                            </Menu.Item>
-                          ))}
-                        </SubMenu>
-                      )}
-                  </React.Fragment>
-                ))}
-              </SubMenu>
-            ))}
-          </Menu>
-          {/* </>
-          )} */}
-        </Sider>
-        <Layout className="site-layout">
-          <Header className="site-layout-background" style={{ padding: 0 }}>
-            <Row align="middle">
-              <Col span={22}>
-                <div style={{ display: "flex", alignItems: "center" }}>
-                  <img
-                    className="bpal_logo"
-                    src="/images/Bpal.png"
-                    alt="Logo"
-                  />
-                </div>
-              </Col>
-              <Col span={2}>
-                <LogoutOutlined
-                  style={{ fontSize: "25px", color: "#FFF", cursor: "pointer" }}
-                  color="#FFF"
-                  onClick={LogoutFun}
-                />
-                {/* <span>LOGOUT</span> */}
-              </Col>
-            </Row>
-          </Header>
-          <Content style={{ margin: "16px" }}>
-            <div style={{ padding: 24, background: "#fff", minHeight: 360 }}>
-              {menuid ? (
-                <>
-                  <div className="date-filter-section">
-                    <form
-                      className="filter-date-form"
-                      onSubmit={handleSubmit(onSubmit)}
-                    >
-                      <div className="date-input-section">
-                        <label>From</label>
-                        <input
-                          type="date"
-                          name="date"
-                          {...register("fromdate", { required: true })}
-                        ></input>
-                      </div>
-                      <div className="date-input-section">
-                        <label>To</label>
-                        <input
-                          type="date"
-                          name="date"
-                          {...register("todate", { required: true })}
-                        ></input>
-                      </div>
-                      <div
-                        style={{ display: "flex", justifyContent: "center" }}
-                      >
-                        <button>
-                          Refresh{" "}
-                          <FilterFilled
-                            style={{ fontSize: "16px", paddingLeft: "5px" }}
-                          />
-                        </button>
-                      </div>
-                    </form>
-                  </div>
-                </>
-              ) : (
-                <img src="/images/grocery.jpg" className="dashboard-image" />
-              )}
-              {report.length === 0 && error &&(
-                <>
-                  <div style={{ textAlign: "center", marginTop: "100px" }}>
-                    <img src="/images/N-Data.jpg"></img>
-                  </div>
-                </>
-              )}
+      <Spin spinning={loading}>
+        <Layout style={{ minHeight: "100vh" }}>
+          <Sider trigger={null} collapsible>
+            <div className="logo" />
+            <div className="dashboard-name">
+              {/* {collapsed ? 'Dashboard' : 'Your Full Dashboard Name'} */}
+              {/* <img className="bpal_logo" src="/images/Bpal.png" alt="Logo" /> */}
             </div>
-          </Content>
+            <div className="logo" />
+            <Menu theme="dark" mode="inline">
+              {menuData.map((menuItem, index) => (
+                <SubMenu
+                  key={`submenu-${index + 1}`}
+                  title={menuItem.Menu_Caption}
+                  icon={<AppstoreOutlined />}
+                >
+                  {menuItem.submenus.map((subItem, subIndex) => (
+                    <React.Fragment
+                      key={`submenu-item-${index + 1}-${subIndex + 1}`}
+                    >
+                      <Menu.Item
+                        key={`submenu-item-${index + 1}-${subIndex + 1}`}
+                        onClick={() => setMenuid(subItem.Menu_Id)}
+                        icon={<CrownOutlined />}
+                        disabled={
+                          subItem.nestedSubmenus &&
+                          subItem.nestedSubmenus.length > 0
+                        }
+                      >
+                        {subItem.Menu_Caption}
+                      </Menu.Item>
+                      {subItem.nestedSubmenus &&
+                        subItem.nestedSubmenus.length > 0 && (
+                          <SubMenu
+                            key={`nested-submenu-${index + 1}`}
+                            title={subItem.Menu_Caption}
+                          >
+                            {subItem.nestedSubmenus.map((nestedSubmenu) => (
+                              <Menu.Item
+                                style={{ paddingLeft: "48px" }}
+                                key={nestedSubmenu.id}
+                                icon={<CodepenOutlined />}
+                                onClick={() => setMenuid(nestedSubmenu.Menu_Id)}
+                              >
+                                {nestedSubmenu.Menu_Caption}
+                              </Menu.Item>
+                            ))}
+                          </SubMenu>
+                        )}
+                    </React.Fragment>
+                  ))}
+                </SubMenu>
+              ))}
+            </Menu>
+
+            {/* </>
+          )} */}
+          </Sider>
+          <Layout className="site-layout">
+            <Header className="site-layout-background" style={{ padding: 0 }}>
+              <Row align="middle">
+                <Col span={22}>
+                  <div style={{ display: "flex", alignItems: "center" }}>
+                    <img
+                      className="bpal_logo"
+                      src="/images/Bpal.png"
+                      alt="Logo"
+                    />
+                  </div>
+                </Col>
+                <Col span={2}>
+                  <LogoutOutlined
+                    style={{
+                      fontSize: "25px",
+                      color: "#FFF",
+                      cursor: "pointer",
+                    }}
+                    color="#FFF"
+                    onClick={LogoutFun}
+                  />
+                  {/* <span>LOGOUT</span> */}
+                </Col>
+              </Row>
+            </Header>
+            <Content style={{ margin: "16px" }}>
+              <div style={{ padding: 24, background: "#fff", minHeight: 360 }}>
+                {menuid ? (
+                  <>
+                    <div className="date-filter-section">
+                      <form
+                        className="filter-date-form"
+                        onSubmit={handleSubmit(onSubmit)}
+                      >
+                        <div className="date-input-section">
+                          <label>From</label>
+                          <input
+                            type="date"
+                            name="date"
+                            {...register("fromdate", { required: true })}
+                          ></input>
+                        </div>
+                        <div className="date-input-section">
+                          <label>To</label>
+                          <input
+                            type="date"
+                            name="date"
+                            {...register("todate", { required: true })}
+                          ></input>
+                        </div>
+                        <div
+                          style={{ display: "flex", justifyContent: "center" }}
+                        >
+                          <button>
+                            Refresh{" "}
+                            <FilterFilled
+                              style={{ fontSize: "16px", paddingLeft: "5px" }}
+                            />
+                          </button>
+                        </div>
+                      </form>
+                    </div>
+                  </>
+                ) : (
+                  <img src="/images/grocery.jpg" className="dashboard-image" />
+                )}
+                {report.length === 0 && !loading && error && (
+                  <>
+                    <div style={{ textAlign: "center", marginTop: "100px" }}>
+                      <img src="/images/N-Data.jpg"></img>
+                    </div>
+                  </>
+                )}
+              </div>
+            </Content>
+          </Layout>
         </Layout>
-      </Layout>
+      </Spin>
     </>
   );
 };

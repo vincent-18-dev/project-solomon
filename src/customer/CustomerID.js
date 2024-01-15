@@ -3,12 +3,14 @@ import { Modal } from "antd";
 import React, { useState } from "react";
 import * as HttpServices from "../service/Service"
 import { useNavigate } from "react-router-dom";
+import {Spin } from "antd";
 // import Login from "./Login";
 import { TiTick } from "react-icons/ti";
 const CustomerID = () => {
   const navigate = useNavigate();
   const { register, handleSubmit, reset } = useForm();
   const [visible, setVisible] = useState(false);
+  const [loading, setLoading] = useState(false);
   const handleOk = () => {
     setVisible(false);
   };
@@ -27,11 +29,14 @@ const CustomerID = () => {
   };
   const onSubmit = async (data) => {
     try {
+      setLoading(true)
       let CustomerId = await HttpServices.Customers(data);
       if (CustomerId?.data?.Available === 'Yes') {
         navigate("/Login")
+        setLoading(false)
       } else {
         showErrorModal();
+        setLoading(false)
       }
     } catch (errors) {
       console.log({ errors })
@@ -40,6 +45,7 @@ const CustomerID = () => {
   };
   return (
     <>
+     <Spin spinning={loading}>
       <div className="container">
         <div className="login-section">
           <div className="login-container">
@@ -69,6 +75,7 @@ const CustomerID = () => {
           </div>
         </div>
       </div>
+      </Spin>
     </>
   );
 };

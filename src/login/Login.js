@@ -4,26 +4,28 @@ import React, { useState } from "react";
 import { FaUser, FaLock, FaArrowCircleRight } from "react-icons/fa";
 import * as HttpServices from "../service/Service";
 import { useNavigate } from "react-router-dom";
+import { Spin } from "antd";
 const Login = () => {
+  const [loading, setLoading] = useState(false);
   const { register, handleSubmit, reset } = useForm();
   const [visible, setVisible] = useState(false);
   const handleOk = () => {
     setVisible(false);
   };
   // handle success Model
-  const showsuccessModal = () => {
-    Modal.success({
-      title: "SUCCESS",
-      content: "LOGGED IN",
-      centered: true,
-      okButtonProps: {
-        style: {
-          backgroundColor: "#ff5500",
-          borderColor: "#ff5500",
-        },
-      },
-    });
-  };
+  // const showsuccessModal = () => {
+  //   Modal.success({
+  //     title: "SUCCESS",
+  //     content: "LOGGED IN",
+  //     centered: true,
+  //     okButtonProps: {
+  //       style: {
+  //         backgroundColor: "#ff5500",
+  //         borderColor: "#ff5500",
+  //       },
+  //     },
+  //   });
+  // };
   // handle Error Model
   const showErrorModal = () => {
     Modal.error({
@@ -40,6 +42,7 @@ const Login = () => {
   };
   const navigate = useNavigate();
   const onSubmit = async (data) => {
+    setLoading(true);
     try {
       const value = {
         method: "login",
@@ -58,10 +61,12 @@ const Login = () => {
           "data",
           JSON.stringify(userInfo?.data?.status_result?.data)
         );
-        showsuccessModal();
+        // showsuccessModal();
         navigate("/Dashboard");
+        setLoading(false);
       } else {
         showErrorModal();
+        setLoading(false);
       }
     } catch (errors) {
       if (errors) {
@@ -73,42 +78,44 @@ const Login = () => {
 
   return (
     <>
-      <div className="container">
-        <div className="login-section">
-          <div className="login-container">
-            <div>
-              <h4 className="logo-text">BPalSoftTech</h4>
-              <form className="login-form" onSubmit={handleSubmit(onSubmit)}>
-                <p>Sign in to start your session</p>
-                <div className="user-input-section">
-                  <FaUser />
-                  <input
-                    type="text"
-                    name="UserName"
-                    placeholder="UserName"
-                    {...register("userid", { required: true })}
-                  ></input>
-                </div>
-                <div className="password-input-section">
-                  <FaLock />
-                  <input
-                    type="password"
-                    name="password"
-                    placeholder="Password"
-                    {...register("password", { required: true })}
-                  ></input>
-                </div>
-                <div style={{ display: "flex", justifyContent: "center" }}>
-                  <button>
-                    Submit <FaArrowCircleRight />
-                  </button>
-                </div>
-              </form>
-              <Modal show={visible} onOk={handleOk}></Modal>
+      <Spin spinning={loading}>
+        <div className="container">
+          <div className="login-section">
+            <div className="login-container">
+              <div>
+                <h4 className="logo-text">BPalSoftTech</h4>
+                <form className="login-form" onSubmit={handleSubmit(onSubmit)}>
+                  <p>Sign in to start your session</p>
+                  <div className="user-input-section">
+                    <FaUser />
+                    <input
+                      type="text"
+                      name="UserName"
+                      placeholder="UserName"
+                      {...register("userid", { required: true })}
+                    ></input>
+                  </div>
+                  <div className="password-input-section">
+                    <FaLock />
+                    <input
+                      type="password"
+                      name="password"
+                      placeholder="Password"
+                      {...register("password", { required: true })}
+                    ></input>
+                  </div>
+                  <div style={{ display: "flex", justifyContent: "center" }}>
+                    <button>
+                      Submit <FaArrowCircleRight />
+                    </button>
+                  </div>
+                </form>
+                <Modal show={visible} onOk={handleOk}></Modal>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      </Spin>
     </>
   );
 };

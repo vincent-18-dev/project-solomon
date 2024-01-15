@@ -6,6 +6,7 @@ import { ScatterChart } from "@mui/x-charts/ScatterChart";
 import { PieChart } from "@mui/x-charts/PieChart";
 
 export default function BarsDataset({ barValue }) {
+  console.log("barValue_vincent", barValue?.data?.status_result?.data);
   const [selectedChartType, setSelectedChartType] = React.useState("Bars");
   if (
     !barValue ||
@@ -21,15 +22,15 @@ export default function BarsDataset({ barValue }) {
     );
   }
 
-  if (!barValue.data.status_result.header.ischart) {
-    return (
-      <>
-        <div style={{ textAlign: "center", marginTop: "100px" }}>
-          <img src="/images/N-Data.jpg"></img>
-        </div>
-      </>
-    );
-  }
+  // if (!barValue.data.status_result.header.ischart) {
+  //   return (
+  //     <>
+  //       <div style={{ textAlign: "center", marginTop: "100px" }}>
+  //         <img src="/images/N-Data.jpg"></img>
+  //       </div>
+  //     </>
+  //   );
+  // }
 
   const chartSetting = {
     yAxis: [
@@ -49,21 +50,22 @@ export default function BarsDataset({ barValue }) {
     },
   };
 
-  const datasets = barValue?.data?.status_result?.data?.map((value) => {
-    const billDate = new Date(value?.Bill_Date);
-    const formattedDate = billDate.toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-    });
-    return {
-      billAmt: value.Bill_Net_Amt,
-      Date: formattedDate,
-    };
-  });
+  const datasets =
+    barValue?.data?.status_result?.data?.map((value) => {
+      const billDate = new Date(value?.Bill_Date);
+      const formattedDate = billDate.toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+      });
+      return {
+        billAmt: value.Bill_Net_Amt,
+        Date: formattedDate,
+      };
+    }) || [];
 
-  const LinesDataForPieChart = barValue?.data?.status_result?.data?.map(
-    (value, index) => {
+  const LinesDataForPieChart =
+    barValue?.data?.status_result?.data?.map((value, index) => {
       const billDate = new Date(value?.Bill_Date);
       const formattedDate = billDate.toLocaleDateString("en-US", {
         year: "numeric",
@@ -72,19 +74,20 @@ export default function BarsDataset({ barValue }) {
       });
       const Data = value?.Bill_Net_Amt ?? 0;
       return { id: index, value: Data, label: formattedDate };
-    }
-  );
+    }) || [];
 
-  const PieCharts = barValue?.data?.status_result?.data?.map((value, index) => {
-    const billDate = new Date(value?.Bill_Date);
-    const formattedDate = billDate.toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "2-digit",
-      day: "2-digit",
-    });
-    const Data = value?.Bill_Net_Amt ?? 0;
-    return { id: index, value: Data, label: formattedDate };
-  });
+  const PieCharts = barValue.data.status_result.data
+    ? barValue.data.status_result.data.map((value, index) => {
+        const billDate = new Date(value?.Bill_Date);
+        const formattedDate = billDate.toLocaleDateString("en-US", {
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+        });
+        const Data = value?.Bill_Net_Amt ?? 0;
+        return { id: index, value: Data, label: formattedDate };
+      })
+    : [];
 
   const valueFormatter = (value) => value;
 

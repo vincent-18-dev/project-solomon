@@ -173,7 +173,9 @@
   width: 100%;
 }
 .bpal_logo {
-  width: 20%;
+  width: 180px; 
+  height: auto; 
+  max-width: 100%;
 }
 .ant-menu-submenu.ant-menu-submenu-inline {
   font-size: 18px;
@@ -216,7 +218,16 @@
   color:white !important;
 }
 
+@media only screen and (max-width: 600px) {
+  .filter-date-form {
+    flex-direction: column;
+  }
 
+  .date-input-section {
+    margin-right: 0;
+    margin-bottom: 10px;
+  }
+}
 
 
 /* .anticon.anticon-close {

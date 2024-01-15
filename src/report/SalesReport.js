@@ -1,4 +1,4 @@
-import React, { useState, useEffect,useRef} from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Row, Col, Layout, Menu, Switch } from "antd";
 import { useForm } from "react-hook-form";
@@ -29,31 +29,42 @@ const SalesReport = () => {
   const [isLoading, setLoading] = useState(false);
   const [currentChildName, setCurrentChildName] = useState("");
   const currentChildNameRef = useRef(currentChildName);
-  console.log("currentChildNameRef",currentChildNameRef);
+  console.log("currentChildNameRef", currentChildNameRef);
   let sideBar = localStorage.getItem("side-bar");
   const report = JSON.parse(sideBar) || [];
-  const onSubmit = async (data, e) => {
-    e.preventDefault();
-    setFDate(data.fromdate);
-    setToDate(data.todate);
+
+  const onSubmit = async () => {
     setLoading(true);
     currentChildNameRef.current = currentChildName;
-    await TableFun(currentChildNameRef.current);
+    await TableFun(currentChildNameRef.current, true);
+    setLoading(false);
   };
 
-  const handleInputChange = () => {
+  const handleInputChangeFrom = (e) => {
+    setFDate(e.target.value);
     setLoading(true);
   };
 
-  const TableFun = async (childName) => {
+  const handleInputChangeTo = (e) => {
+    setToDate(e.target.value);
+    setLoading(true);
+  };
+
+  console.log("fDate_check", fDate);
+
+  const TableFun = async (childName, isVerifyClick) => {
     if (!childName) {
       return;
+    }
+    let repstatusValue = "";
+    if (isVerifyClick) {
+      repstatusValue = "refresh";
     }
     const menuNames = {
       method: "report",
       data: {
         repname: "soloserve",
-        repstatus: "",
+        repstatus: repstatusValue,
         menuid: menuId,
         menuname: childName,
         fromdate: fDate,
@@ -62,21 +73,23 @@ const SalesReport = () => {
     };
     try {
       let menuName = await HttpServices.Table(menuNames);
-      console.log("menuName_check",menuName);
+      console.log("menuName_check", menuName);
       setTableValue(menuName);
-      setLoading(false);
     } catch (error) {
-      console.log({ error });
-      setLoading(false);
+      console.log({ err: error });
       setTableValue({
         status: 500,
         data: { status_result: { header: { ischart: false } } },
       });
+    } finally {
+      setLoading(false);
     }
   };
 
   const onChange = (checked) => {
     setChecked(checked);
+    setLoading(true);
+    setLoading(false);
   };
 
   const navigate = useNavigate();
@@ -84,12 +97,12 @@ const SalesReport = () => {
     localStorage.removeItem("data");
     navigate("/");
   };
-  useEffect(() => {
-    TableFun(currentChildNameRef.current);
-  }, [fDate, toDate, currentChildName]);
+
   // useEffect(() => {
-  //   TableFun(currentChildName);
-  // }, [fDate, toDate, currentChildName]);
+  //   TableFun(currentChildNameRef.current, true);
+  // }, [fDate, toDate]);
+
+  console.log("tableValue", tableValue);
   return (
     <Layout style={{ minHeight: "100vh" }}>
       <Sider trigger={null} collapsible>
@@ -159,7 +172,7 @@ const SalesReport = () => {
                     name="date"
                     defaultValue={inputValue?.data?.fromdate}
                     {...register("fromdate")}
-                    onChange={handleInputChange}
+                    onChange={handleInputChangeFrom}
                   ></input>
                 </div>
                 <div className="date-input-section">
@@ -169,7 +182,7 @@ const SalesReport = () => {
                     name="date"
                     defaultValue={inputValue?.data?.todate}
                     {...register("todate")}
-                    onChange={handleInputChange}
+                    onChange={handleInputChangeTo}
                   ></input>
                 </div>
                 <div style={{ display: "flex", justifyContent: "center" }}>
@@ -184,10 +197,13 @@ const SalesReport = () => {
             </div>
             <div style={{ marginTop: "100px" }}>
               {isLoading ? (
-                <Spin />
-              ) : tableValue.status === 200 &&
-                tableValue.data &&
-                tableValue.data.status_result !== "" ? (
+                <div style={{ textAlign: "center" }}>
+                  <Spin />
+                </div>
+              ) : (tableValue.status === 200 &&
+                  tableValue.data &&
+                  tableValue.data.status_result !== "") &&
+                  tableValue?.data?.status_result?.data?.length !== 0 ? (
                 <>
                   <div className="toggle-btn">
                     <span>Table</span>{" "}
@@ -213,7 +229,7 @@ const SalesReport = () => {
               ) : tableValue.status === 400 ||
                 (tableValue.status === 200 &&
                   tableValue.data &&
-                  tableValue.data.status_result === "") ? (
+                  tableValue.data.status_result === ""|| tableValue?.data?.status_result?.data?.length === 0) ? (
                 <div style={{ textAlign: "center" }}>
                   <img src="/images/N-Data.jpg" alt="No Data" />
                 </div>
