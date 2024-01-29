@@ -77,10 +77,12 @@ const Dashboard = () => {
         );
         setReport(filterInfo?.data?.status_result);
         navigate("/SalesReport");
+      } else {
+        setLoading(false);
       }
     } catch (error) {
       console.error("Error fetching report data", error);
-      setLoading(false)
+      setLoading(false);
     }
   };
 
@@ -90,12 +92,28 @@ const Dashboard = () => {
 
   console.log("report", report);
   console.log("menuData", menuData);
-
+  const [collapsed, setCollapsed] = useState(false);
+  const toggleCollapsed = () => {
+    setCollapsed(!collapsed);
+  };
   return (
     <>
       <Spin spinning={loading}>
         <Layout style={{ minHeight: "100vh" }}>
-          <Sider trigger={null} collapsible>
+          <Sider
+            trigger={null}
+            collapsible
+            collapsed={collapsed}
+            breakpoint="md" // Add this line to specify the breakpoint
+            onBreakpoint={(broken) => {
+              console.log("broken",broken);
+              if (broken) {
+                setCollapsed(true);
+              }else{
+                setCollapsed(false);
+              }
+            }}
+          >
             <div className="logo" />
             <div className="dashboard-name">
               {/* {collapsed ? 'Dashboard' : 'Your Full Dashboard Name'} */}
@@ -216,7 +234,7 @@ const Dashboard = () => {
                     </div>
                   </>
                 ) : (
-                  <img src="/images/grocery.jpg" className="dashboard-image" />
+                  <img src="/images/banner.jpeg" className="dashboard-image" />
                 )}
                 {report.length === 0 && !loading && error && (
                   <>

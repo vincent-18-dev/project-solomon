@@ -140,12 +140,12 @@ const SalesReport = () => {
           <Row align="middle">
             <Col span={18}>
               <div style={{ display: "flex", alignItems: "center" }}>
-                <img className="bpal_logo" src="/images/Bpal.png" alt="Logo" />
+                <a href="/" style={{display:"flex"}}><img className="bpal_logo" src="/images/Bpal.png" alt="Logo" /></a>
               </div>
             </Col>
             <Col span={4}>
               <div>
-                <a href="/Dashboard">Dashboard</a>{" "}
+                <a href="/Dashboard" style={{color:"#ff5500"}}>Dashboard</a>{" "}
                 <span style={{ color: "white" }}>/ SalesReport</span>
               </div>
             </Col>
