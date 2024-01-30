@@ -45,7 +45,7 @@ const CustomerID = () => {
   };
   return (
     <>
-     <Spin spinning={loading}>
+     <Spin spinning={loading} tip="Loading...">
       <div className="container">
         <div className="login-section">
           <div className="login-container">

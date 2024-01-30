@@ -29,7 +29,7 @@ const SalesReport = () => {
   const [isLoading, setLoading] = useState(false);
   const [currentChildName, setCurrentChildName] = useState("");
   const currentChildNameRef = useRef(currentChildName);
-  console.log("currentChildNameRef", currentChildNameRef);
+  // console.log("currentChildNameRef", currentChildNameRef);
   let sideBar = localStorage.getItem("side-bar");
   const report = JSON.parse(sideBar) || [];
 
@@ -50,7 +50,7 @@ const SalesReport = () => {
     setLoading(true);
   };
 
-  console.log("fDate_check", fDate);
+  // console.log("fDate_check", fDate);
 
   const TableFun = async (childName, isVerifyClick) => {
     if (!childName) {
@@ -73,7 +73,7 @@ const SalesReport = () => {
     };
     try {
       let menuName = await HttpServices.Table(menuNames);
-      console.log("menuName_check", menuName);
+      // console.log("menuName_check", menuName);
       setTableValue(menuName);
     } catch (error) {
       console.log({ err: error });
@@ -102,7 +102,7 @@ const SalesReport = () => {
   //   TableFun(currentChildNameRef.current, true);
   // }, [fDate, toDate]);
 
-  console.log("tableValue", tableValue);
+  // console.log("tableValue", tableValue);
   return (
     <Layout style={{ minHeight: "100vh" }}>
       <Sider trigger={null} collapsible>
@@ -198,7 +198,7 @@ const SalesReport = () => {
             <div style={{ marginTop: "100px" }}>
               {isLoading ? (
                 <div style={{ textAlign: "center" }}>
-                  <Spin />
+                  <Spin tip="Loading..."/>
                 </div>
               ) : (tableValue.status === 200 &&
                   tableValue.data &&

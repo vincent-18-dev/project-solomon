@@ -29,7 +29,7 @@ const TableFunction = ({ tableData }) => {
     dataIndex: item.name,
     width: 150,
     sorter: (a, b) => (
-      console.log("value", a[item.name]),
+      // console.log("value", a[item.name]),
       typeof a[item.name] === "number" && typeof b[item.name] === "number"
         ? a[item.name] - b[item.name]
         : String(a[item.name]).localeCompare(String(b[item.name]))
@@ -79,7 +79,7 @@ const TableFunction = ({ tableData }) => {
   }));
   // console.log("columns", columns)
   const filteredData = data.filter((item) => {
-    console.log("item", item.Bill_Date);
+    // console.log("item", item.Bill_Date);
     return Object.values(item).some((val) =>
       String(val).toLowerCase().includes(searchText.toLowerCase())
     );

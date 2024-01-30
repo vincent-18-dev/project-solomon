@@ -90,15 +90,15 @@ const Dashboard = () => {
     menuFilter();
   }, []);
 
-  console.log("report", report);
-  console.log("menuData", menuData);
+  // console.log("report", report);
+  // console.log("menuData", menuData);
   const [collapsed, setCollapsed] = useState(false);
   const toggleCollapsed = () => {
     setCollapsed(!collapsed);
   };
   return (
     <>
-      <Spin spinning={loading}>
+      <Spin spinning={loading} tip="Loading...">
         <Layout style={{ minHeight: "100vh" }}>
           <Sider
             trigger={null}
@@ -106,7 +106,7 @@ const Dashboard = () => {
             collapsed={collapsed}
             breakpoint="md" // Add this line to specify the breakpoint
             onBreakpoint={(broken) => {
-              console.log("broken",broken);
+              // console.log("broken",broken);
               if (broken) {
                 setCollapsed(true);
               }else{

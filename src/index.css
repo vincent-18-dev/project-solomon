@@ -89,7 +89,7 @@ code {
 }
 .login-section::before {
   content: "";
-  background: url(../public/images/banner.jpeg);
+  background: url(https://bpartner.in/webreport/logo/login.jpeg);
   position: absolute;
   top: 0;
   left: 0;

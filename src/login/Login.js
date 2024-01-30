@@ -51,7 +51,7 @@ const Login = () => {
         },
       };
       let userInfo = await HttpServices.user(value);
-      console.log("userInfo", userInfo);
+      // console.log("userInfo", userInfo);
       if (
         userInfo.status === 200 &&
         userInfo?.data?.status_result !== "In-Correct password" &&
@@ -78,7 +78,7 @@ const Login = () => {
 
   return (
     <>
-      <Spin spinning={loading}>
+      <Spin spinning={loading} tip="Loading...">
         <div className="container">
           <div className="login-section">
             <div className="login-container">

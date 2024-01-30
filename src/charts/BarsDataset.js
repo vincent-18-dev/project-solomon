@@ -6,7 +6,7 @@ import { ScatterChart } from "@mui/x-charts/ScatterChart";
 import { PieChart } from "@mui/x-charts/PieChart";
 
 export default function BarsDataset({ barValue }) {
-  console.log("barValue_vincent", barValue?.data?.status_result?.data);
+  // console.log("barValue_vincent", barValue?.data?.status_result?.data);
   const [selectedChartType, setSelectedChartType] = React.useState("Bars");
   if (
     !barValue ||
@@ -22,15 +22,15 @@ export default function BarsDataset({ barValue }) {
     );
   }
 
-  // if (!barValue.data.status_result.header.ischart) {
-  //   return (
-  //     <>
-  //       <div style={{ textAlign: "center", marginTop: "100px" }}>
-  //         <img src="/images/N-Data.jpg"></img>
-  //       </div>
-  //     </>
-  //   );
-  // }
+  if (!barValue.data.status_result.header.ischart) {
+    return (
+      <>
+        <div style={{ textAlign: "center", marginTop: "100px" }}>
+          <img src="/images/N-Data.jpg"></img>
+        </div>
+      </>
+    );
+  }
 
   const chartSetting = {
     yAxis: [
