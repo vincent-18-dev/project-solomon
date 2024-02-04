@@ -1,73 +1,59 @@
-import React, { useState } from "react";
-import { Table, Button, Input } from "antd";
+import React, { useState, useEffect } from "react";
+import { Table, Input } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
+
 const TableFunction = ({ tableData }) => {
   const [searchText, setSearchText] = useState("");
-  if (
-    !tableData ||
-    !tableData.data ||
-    !tableData.data.status_result ||
-    !tableData.data.status_result.header ||
-    !tableData.data.status_result.data
-  ) {
-    return (
-      <div>
-        <p>Error: Invalid data structure</p>
-      </div>
-    );
-  }
-  const { header, data } = tableData.data.status_result;
-  if (!Array.isArray(header) || !Array.isArray(data)) {
-    return (
-      <div>
-        <p>Error: Invalid data format</p>
-      </div>
-    );
-  }
-  const columns = header.map((item) => ({
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+  const [filteredData, setFilteredData] = useState([]);
+
+  // const formatDate = (dateString) => {
+  //   return new Date(dateString).toLocaleDateString("en-GB", {
+  //     day: "2-digit",
+  //     month: "2-digit",
+  //     year: "numeric",
+  //   });
+  // };
+
+  useEffect(() => {
+    if (
+      tableData &&
+      tableData.data &&
+      tableData.data.status_result &&
+      tableData.data.status_result.data
+    ) {
+      const filtered = tableData.data.status_result.data
+        .filter((item) =>
+          Object.values(item).some((val) =>
+            String(val).toLowerCase().includes(searchText.toLowerCase())
+          )
+        )
+        // .map((item) => {
+        //   return {
+        //     ...item,
+        //     ...(item.Bill_Date && {
+        //       Bill_Date: formatDate(item.Bill_Date),
+        //     }),
+        //   };
+        // });
+      setFilteredData(filtered);
+    }
+  }, [tableData, searchText]);
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+
+  const handleSearch = (value) => {
+    setSearchText(value);
+    setCurrentPage(1); // Reset current page to 1 when searching
+  };
+
+  const columns = tableData.data.status_result.header.map((item) => ({
     title: item.caption,
     dataIndex: item.name,
     width: 150,
-    sorter: (a, b) => (
-      // console.log("value", a[item.name]),
-      typeof a[item.name] === "number" && typeof b[item.name] === "number"
-        ? a[item.name] - b[item.name]
-        : String(a[item.name]).localeCompare(String(b[item.name]))
-    ),
-    filterDropdown: ({
-      setSelectedKeys,
-      selectedKeys,
-      confirm,
-      clearFilters,
-    }) => (
-      <div style={{ padding: 8 }}>
-        <Input
-          placeholder={`Search ${item.caption}`}
-          value={selectedKeys[0]}
-          onChange={(e) =>
-            setSelectedKeys(e.target.value ? [e.target.value] : [])
-          }
-          onPressEnter={() => confirm()}
-          style={{ width: 188, marginBottom: 8, display: "block" }}
-        />
-        <Button
-          type="primary"
-          onClick={() => confirm()}
-          icon={<SearchOutlined />}
-          size="small"
-          style={{ width: 90, marginRight: 8 }}
-        >
-          Search
-        </Button>
-        <Button
-          onClick={() => clearFilters()}
-          size="small"
-          style={{ width: 90 }}
-        >
-          Reset
-        </Button>
-      </div>
-    ),
     onFilter: (value, record) => {
       return String(record[item.name])
         .toLowerCase()
@@ -76,43 +62,40 @@ const TableFunction = ({ tableData }) => {
     filterIcon: (filtered) => (
       <SearchOutlined style={{ color: filtered ? "#1890ff" : undefined }} />
     ),
+    sorter: (a, b) => {
+      const valueA = a[item.name];
+      const valueB = b[item.name];
+      return typeof valueA === "number" && typeof valueB === "number"
+        ? valueA - valueB
+        : String(valueA).localeCompare(String(valueB));
+    },
   }));
-  // console.log("columns", columns)
-  const filteredData = data.filter((item) => {
-    // console.log("item", item.Bill_Date);
-    return Object.values(item).some((val) =>
-      String(val).toLowerCase().includes(searchText.toLowerCase())
-    );
-  });
-  const dataSource = filteredData.map((item, index) => {
-    // Assuming Bill_Date is the property you want to format
-    const billDate = new Date(item.Bill_Date);
-    const formattedDate = billDate.toLocaleDateString("en-GB", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-    });
 
-    return {
-      key: index,
-      ...item,
-      Bill_Date: formattedDate,
-    };
-  });
   return (
     <>
       <div style={{ textAlign: "end" }}>
         <Input
           placeholder="Search overall"
           value={searchText}
-          onChange={(e) => setSearchText(e.target.value)}
+          onChange={(e) => handleSearch(e.target.value)}
           style={{ width: 200, marginBottom: 16 }}
+          prefix={<SearchOutlined />}
         />
       </div>
       <Table
         columns={columns}
-        dataSource={dataSource}
-        pagination={false}
+        dataSource={filteredData}
+        pagination={{
+          current: currentPage,
+          pageSize: pageSize,
+          total: filteredData.length,
+          onChange: handlePageChange,
+          showSizeChanger: true,
+          showQuickJumper: true,
+          pageSizeOptions: ["10", "20", "50", "100"],
+          showTotal: (total, range) =>
+            `${range[0]}-${range[1]} of ${total} items`,
+        }}
         scroll={{
           x: "150%",
           y: 800,

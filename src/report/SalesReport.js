@@ -29,7 +29,6 @@ const SalesReport = () => {
   const [isLoading, setLoading] = useState(false);
   const [currentChildName, setCurrentChildName] = useState("");
   const currentChildNameRef = useRef(currentChildName);
-  // console.log("currentChildNameRef", currentChildNameRef);
   let sideBar = localStorage.getItem("side-bar");
   const report = JSON.parse(sideBar) || [];
 
@@ -50,12 +49,11 @@ const SalesReport = () => {
     setLoading(true);
   };
 
-  // console.log("fDate_check", fDate);
-
   const TableFun = async (childName, isVerifyClick) => {
     if (!childName) {
       return;
     }
+    setLoading(true);
     let repstatusValue = "";
     if (isVerifyClick) {
       repstatusValue = "refresh";
@@ -73,7 +71,7 @@ const SalesReport = () => {
     };
     try {
       let menuName = await HttpServices.Table(menuNames);
-      // console.log("menuName_check", menuName);
+      console.log("menuName", menuName);
       setTableValue(menuName);
     } catch (error) {
       console.log({ err: error });
@@ -98,19 +96,11 @@ const SalesReport = () => {
     navigate("/");
   };
 
-  // useEffect(() => {
-  //   TableFun(currentChildNameRef.current, true);
-  // }, [fDate, toDate]);
-
-  // console.log("tableValue", tableValue);
   return (
     <Layout style={{ minHeight: "100vh" }}>
       <Sider trigger={null} collapsible>
         <div className="logo" />
-        <div className="dashboard-name">
-          {/* {collapsed ? 'Dashboard' : 'Your Full Dashboard Name'} */}
-          {/* <img className="bpal_logo" src="/images/Bpal.png" alt="Logo" /> */}
-        </div>
+        <div className="dashboard-name"></div>
         <div className="logo" />
         <Menu theme="dark" mode="inline">
           {report.data.map((value, parentIndex) => (
@@ -140,12 +130,20 @@ const SalesReport = () => {
           <Row align="middle">
             <Col span={18}>
               <div style={{ display: "flex", alignItems: "center" }}>
-                <a href="/" style={{display:"flex"}}><img className="bpal_logo" src="/images/Bpal.png" alt="Logo" /></a>
+                <a href="/" style={{ display: "flex" }}>
+                  <img
+                    className="bpal_logo"
+                    src="/images/Bpal.png"
+                    alt="Logo"
+                  />
+                </a>
               </div>
             </Col>
             <Col span={4}>
               <div>
-                <a href="/Dashboard" style={{color:"#ff5500"}}>Dashboard</a>{" "}
+                <a href="/Dashboard" style={{ color: "#ff5500" }}>
+                  Dashboard
+                </a>{" "}
                 <span style={{ color: "white" }}>/ SalesReport</span>
               </div>
             </Col>
@@ -198,12 +196,12 @@ const SalesReport = () => {
             <div style={{ marginTop: "100px" }}>
               {isLoading ? (
                 <div style={{ textAlign: "center" }}>
-                  <Spin tip="Loading..."/>
+                  <Spin tip="Loading..." />
                 </div>
-              ) : (tableValue.status === 200 &&
-                  tableValue.data &&
-                  tableValue.data.status_result !== "") &&
-                  tableValue?.data?.status_result?.data?.length !== 0 ? (
+              ) : tableValue.status === 200 &&
+                tableValue.data &&
+                tableValue.data.status_result !== "" &&
+                tableValue?.data?.status_result?.data?.length !== 0 ? (
                 <>
                   <div className="toggle-btn">
                     <span>Table</span>{" "}
@@ -229,7 +227,8 @@ const SalesReport = () => {
               ) : tableValue.status === 400 ||
                 (tableValue.status === 200 &&
                   tableValue.data &&
-                  tableValue.data.status_result === ""|| tableValue?.data?.status_result?.data?.length === 0) ? (
+                  tableValue.data.status_result === "") ||
+                tableValue?.data?.status_result?.data?.length === 0 ? (
                 <div style={{ textAlign: "center" }}>
                   <img src="/images/N-Data.jpg" alt="No Data" />
                 </div>
